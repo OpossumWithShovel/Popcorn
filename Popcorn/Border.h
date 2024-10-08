@@ -25,6 +25,7 @@ public:
 	void Redraw_Floor();
 	void Open_Gate(int gate_index, bool is_short_open);
 	bool Is_Gate_Open(int gate_index);
+	void Get_Gate_Pos(int gate_index, int &gate_x_pos, int &gate_y_pos);
 
 private:
 	void Draw_Tile(HDC hdc, RECT &paint_area, int x, int y, bool is_top) const;

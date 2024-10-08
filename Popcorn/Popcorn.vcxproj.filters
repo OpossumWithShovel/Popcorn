@@ -82,6 +82,9 @@
     <Filter Include="#Ball\Ball_Set">
       <UniqueIdentifier>{14b51e38-22cb-49c2-acca-0ea840183f55}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Monsters_Set">
+      <UniqueIdentifier>{5c52045e-f161-4e8a-afd2-3b72e2445545}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -146,6 +149,9 @@
     </ClInclude>
     <ClInclude Include="Ball_Set.h">
       <Filter>#Ball\Ball_Set</Filter>
+    </ClInclude>
+    <ClInclude Include="AsMonsters_Set.h">
+      <Filter>Monsters_Set</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -215,6 +221,9 @@
     </ClCompile>
     <ClCompile Include="Ball_Set.cpp">
       <Filter>#Ball\Ball_Set</Filter>
+    </ClCompile>
+    <ClCompile Include="AsMonsters_Set.cpp">
+      <Filter>Monsters_Set</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

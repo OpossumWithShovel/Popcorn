@@ -32,6 +32,7 @@ public:
 	void Open_Gate(bool is_short_open);
 	bool Is_Gate_Open() const;
 	void Get_Y_Area(int &gate_top_y, int &gate_low_y) const;
+	void Get_Gate_Pos(int &gate_x_pos, int &gate_y_pos) const;
 
 private:
 	void Act_Opening(bool is_short, bool &correct_pos);

@@ -154,6 +154,11 @@ bool AsBorder::Is_Gate_Open(int gate_index)
 	return Gates[gate_index]->Is_Gate_Open();
 }
 //------------------------------------------------------------------------------------------------------------
+void AsBorder::Get_Gate_Pos(int gate_index, int &gate_x_pos, int &gate_y_pos)
+{
+	Gates[gate_index]->Get_Gate_Pos(gate_x_pos, gate_y_pos);
+}
+//------------------------------------------------------------------------------------------------------------
 void AsBorder::Draw_Tile(HDC hdc, RECT &paint_area, int x, int y, bool is_top) const
 {
 	int i;

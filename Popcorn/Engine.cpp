@@ -27,6 +27,7 @@ void AsEngine::Init_Engine(HWND hwnd)
 
 	Level.Init();
 	Platform.Init(&Ball_Set, &Laser_Beams_Set);
+	Monsters_Set.Init(&Border);
 
 	ABall::Hit_Checker_List.Add_Hit_Checker(&Level);
 	ABall::Hit_Checker_List.Add_Hit_Checker(&Border);
@@ -50,6 +51,7 @@ void AsEngine::Init_Engine(HWND hwnd)
 	Add_Next_Module(index, &Platform);
 	Add_Next_Module(index, &Ball_Set);
 	Add_Next_Module(index, &Laser_Beams_Set);
+	Add_Next_Module(index, &Monsters_Set);
 
 	//Modules[0] = &Level;
 	//Modules[1] = &Border;
@@ -185,6 +187,8 @@ void AsEngine::Restart_Level()
 	Game_State = EGame_State::Restart_Level;
 	Border.Open_Gate(7, true);
 	Border.Open_Gate(5, false);
+
+	Monsters_Set.Let_Out(4);
 }
 //------------------------------------------------------------------------------------------------------------
 void AsEngine::Advance_Movers()
@@ -291,7 +295,7 @@ void AsEngine::On_Falling_Letter(AFalling_Letter *falling_letter)
 //------------------------------------------------------------------------------------------------------------
 void AsEngine::Add_Next_Module(int &index, AGame_Object *game_obj)
 {
-	if (index >= 0 || index < AsConfig::Max_Laser_Beams_Count)
+	if (index >= 0 && index < AsConfig::Max_Laser_Beams_Count)
 		Modules[index++] = game_obj;
 	else
 		AsTools::Throw();

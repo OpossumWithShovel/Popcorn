@@ -3,7 +3,7 @@
 #include "Ball_Set.h"
 #include "Level.h"
 #include "Platform.h"
-#include "Border.h"
+#include "AsMonsters_Set.h"
 
 //-----------------------------------------------------------------------------------------------------------
 enum class EGame_State: unsigned char
@@ -53,10 +53,8 @@ private:
 	AsLevel Level;
 	AsBorder Border;
 	ALaser_Beams_Set Laser_Beams_Set;
+	AsMonsters_Set Monsters_Set;
 
 	AGame_Object *Modules[AsConfig::Max_Modules_Count];
-
-	//AMover *Movers[AsConfig::Max_Movers_Count];
-	//AGraphics_Object *Modules[AsConfig::Max_Modules_Count];
 };
 //-----------------------------------------------------------------------------------------------------------

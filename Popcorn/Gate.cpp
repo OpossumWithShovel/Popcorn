@@ -108,6 +108,12 @@ void AGate::Get_Y_Area(int &gate_top_y, int &gate_low_y) const
 	gate_low_y = Gate_Rect.bottom;
 }
 //------------------------------------------------------------------------------------------------------------
+void AGate::Get_Gate_Pos(int &gate_x_pos, int &gate_y_pos) const
+{
+	gate_x_pos = X_Pos;
+	gate_y_pos = (int)Origin_Y_Pos;
+}
+//------------------------------------------------------------------------------------------------------------
 void AGate::Act_Opening(bool is_short, bool &correct_pos)
 {
 	double max_gap_height;

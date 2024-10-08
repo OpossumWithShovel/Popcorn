@@ -15,10 +15,12 @@ const AColor AsConfig::Red_Highlight(AsConfig::Red_Color, 3 * AsConfig::Global_S
 const AColor AsConfig::Blue_Highlight(AsConfig::Blue_Color, AsConfig::Global_Scale - 1);
 const AColor AsConfig::Laser_Color(AsConfig::White_Color, AsConfig::Global_Scale);
 const AColor AsConfig::Gate_Highlight_Color(AsConfig::White_Color, AsConfig::Global_Scale);
+const AColor AsConfig::Cornea_Color(AsConfig::BG_Color, AsConfig::White_Color, AsConfig::Global_Scale - 1);
+const AColor AsConfig::Iris_Color(AsConfig::BG_Color, AsConfig::Blue_Color, AsConfig::Global_Scale - 1);
 
 HWND AsConfig::Hwnd;
 
-const double AsConfig::D_Global_Scale = Global_Scale;
+const double AsConfig::D_Global_Scale = (double)Global_Scale;
 const double AsConfig::Moving_Step_Size = 1.0 / D_Global_Scale;
 const double AsConfig::Start_Ball_Y_Pos = 184.0;
 const double AsConfig::Max_Ball_Speed = 6.0;
