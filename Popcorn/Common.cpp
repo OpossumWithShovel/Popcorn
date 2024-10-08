@@ -1,4 +1,4 @@
-#include "Common.h"
+﻿#include "Common.h"
 
 // AHit_Checker
 //------------------------------------------------------------------------------------------------------------
@@ -140,5 +140,88 @@ void AColor::Select(HDC hdc) const
 void AColor::Select_Pen(HDC hdc) const
 {
 	SelectObject(hdc, Pen);
+}
+//------------------------------------------------------------------------------------------------------------
+
+
+
+
+// AsGame_Objects_Set
+//------------------------------------------------------------------------------------------------------------
+void AsGame_Objects_Set::Begin_Movement()
+{
+	int index = 0;
+	AGame_Object *game_obj;
+
+	while(Get_Next_Obj(index, &game_obj) )
+		game_obj->Begin_Movement();
+}
+//------------------------------------------------------------------------------------------------------------
+void AsGame_Objects_Set::Finish_Movement()
+{
+	int index = 0;
+	AGame_Object *game_obj;
+
+	while(Get_Next_Obj(index, &game_obj) )
+		game_obj->Finish_Movement();
+}
+//------------------------------------------------------------------------------------------------------------
+void AsGame_Objects_Set::Advance(double max_speed)
+{
+	int index = 0;
+	AGame_Object *game_obj;
+
+	while(Get_Next_Obj(index, &game_obj) )
+		game_obj->Advance(max_speed);
+}
+//------------------------------------------------------------------------------------------------------------
+double AsGame_Objects_Set::Get_Speed()
+{
+	int index = 0;
+	double max_speed = 0.0;
+	double curr_speed;
+	AGame_Object *game_obj;
+
+	while(Get_Next_Obj(index, &game_obj) )
+	{
+		curr_speed = fabs(game_obj->Get_Speed() );
+
+		if (curr_speed > max_speed)
+			max_speed = curr_speed;
+	}
+
+	return max_speed;
+}
+//------------------------------------------------------------------------------------------------------------
+void AsGame_Objects_Set::Act()
+{
+	int index = 0;
+	AGame_Object *game_obj;
+
+	while(Get_Next_Obj(index, &game_obj) )
+		game_obj->Act();
+}
+//------------------------------------------------------------------------------------------------------------
+void AsGame_Objects_Set::Clear(HDC hdc, RECT &paint_area)
+{
+	int index = 0;
+	AGame_Object *game_obj;
+
+	while(Get_Next_Obj(index, &game_obj) )
+		game_obj->Clear(hdc, paint_area);
+}
+//------------------------------------------------------------------------------------------------------------
+void AsGame_Objects_Set::Draw(HDC hdc, RECT &paint_area)
+{
+	int index = 0;
+	AGame_Object *game_obj;
+
+	while(Get_Next_Obj(index, &game_obj) )
+		game_obj->Draw(hdc, paint_area);
+}
+//------------------------------------------------------------------------------------------------------------
+bool AsGame_Objects_Set::Is_Finished()
+{
+	return false;  // Этот метод пока не используется ни в одном из объектов
 }
 //------------------------------------------------------------------------------------------------------------

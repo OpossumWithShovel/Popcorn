@@ -40,6 +40,7 @@ private:
 	void Play_Level();
 	void Advance_Movers();
 	void On_Falling_Letter(AFalling_Letter *falling_letter);
+	void Add_Next_Module(int &index, AGame_Object *game_obj);
 
 	EGame_State Game_State;
 
@@ -53,7 +54,9 @@ private:
 	AsBorder Border;
 	ALaser_Beams_Set Laser_Beams_Set;
 
-	AMover *Movers[AsConfig::Max_Movers_Count];
-	AGraphics_Object *Modules[AsConfig::Max_Modules_Count];
+	AGame_Object *Modules[AsConfig::Max_Modules_Count];
+
+	//AMover *Movers[AsConfig::Max_Movers_Count];
+	//AGraphics_Object *Modules[AsConfig::Max_Modules_Count];
 };
 //-----------------------------------------------------------------------------------------------------------

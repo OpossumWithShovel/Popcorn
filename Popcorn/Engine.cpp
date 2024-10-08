@@ -3,12 +3,14 @@
 // AsEngine
 //------------------------------------------------------------------------------------------------------------
 AsEngine::AsEngine()
-	: Game_State(EGame_State::Lost_Ball), Life_Count(5), Rest_Distance(0.0), Movers{}, Modules{}
+	: Game_State(EGame_State::Lost_Ball), Life_Count(5), Rest_Distance(0.0), Modules{}
 {
 }
 //------------------------------------------------------------------------------------------------------------
 void AsEngine::Init_Engine(HWND hwnd)
 {
+	int index = 0;
+
 	SYSTEMTIME sys_time;
 	FILETIME file_time;
 
@@ -41,17 +43,19 @@ void AsEngine::Init_Engine(HWND hwnd)
 
 	SetTimer(AsConfig::Hwnd, Timer_ID, 1000 / AsConfig::FPS, 0);
 
-	memset(Movers, 0, sizeof(Movers) );
-	Movers[0] = &Platform;
-	Movers[1] = &Ball_Set;
-	Movers[2] = &Laser_Beams_Set;
-
 	memset(Modules, 0, sizeof(Modules) );
-	Modules[0] = &Level;
-	Modules[1] = &Border;
-	Modules[2] = &Platform;
-	Modules[3] = &Ball_Set;
-	Modules[4] = &Laser_Beams_Set;
+
+	Add_Next_Module(index, &Level);
+	Add_Next_Module(index, &Border);
+	Add_Next_Module(index, &Platform);
+	Add_Next_Module(index, &Ball_Set);
+	Add_Next_Module(index, &Laser_Beams_Set);
+
+	//Modules[0] = &Level;
+	//Modules[1] = &Border;
+	//Modules[2] = &Platform;
+	//Modules[3] = &Ball_Set;
+	//Modules[4] = &Laser_Beams_Set;
 }
 //-------------------------------------------------------------------------------------------------------------
 void AsEngine::Draw_Frame(HDC hdc, RECT &paint_area)
@@ -191,11 +195,11 @@ void AsEngine::Advance_Movers()
 
 	for (i = 0; i < AsConfig::Max_Movers_Count; i++)
 	{
-		if (Movers[i] != 0)
+		if (Modules[i] != 0)
 		{
-			Movers[i]->Begin_Movement();
+			Modules[i]->Begin_Movement();
 
-			curr_speed = fabs(Movers[i]->Get_Speed() );
+			curr_speed = fabs(Modules[i]->Get_Speed() );
 
 			if (curr_speed > max_speed)
 				max_speed = curr_speed;
@@ -208,11 +212,11 @@ void AsEngine::Advance_Movers()
 	{
 		for (i = 0; i < AsConfig::Max_Movers_Count; i++)
 		{
-			if (Movers[i] != 0)
+			if (Modules[i] != 0)
 			{
-				Movers[i]->Advance(max_speed);
+				Modules[i]->Advance(max_speed);
 
-				if (Movers[i] == &Platform && Platform.Get_State() == EPlatform_State::Glue) 
+				if (Modules[i] == &Platform && Platform.Get_State() == EPlatform_State::Glue) 
 					if ( ! (Platform.Get_Moving_State() == EPlatform_Moving_State::Stop || Platform.Get_Moving_State() == EPlatform_Moving_State::Stopping) )
 						Ball_Set.Forced_Advance(Platform.Get_X_Offset() );
 			}
@@ -222,8 +226,8 @@ void AsEngine::Advance_Movers()
 	}
 
 	for (i = 0; i < AsConfig::Max_Movers_Count; i++)
-		if (Movers[i] != 0)
-			Movers[i]->Finish_Movement();
+		if (Modules[i] != 0)
+			Modules[i]->Finish_Movement();
 }
 //------------------------------------------------------------------------------------------------------------
 void AsEngine::On_Falling_Letter(AFalling_Letter *falling_letter)
@@ -283,5 +287,13 @@ void AsEngine::On_Falling_Letter(AFalling_Letter *falling_letter)
 	}
 
 	falling_letter->Destroy();
+}
+//------------------------------------------------------------------------------------------------------------
+void AsEngine::Add_Next_Module(int &index, AGame_Object *game_obj)
+{
+	if (index >= 0 || index < AsConfig::Max_Laser_Beams_Count)
+		Modules[index++] = game_obj;
+	else
+		AsTools::Throw();
 }
 //------------------------------------------------------------------------------------------------------------

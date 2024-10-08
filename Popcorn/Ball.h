@@ -17,7 +17,7 @@ enum class EBall_State: unsigned char
 	Teleporting_Stage_2
 };
 //------------------------------------------------------------------------------------------------------------
-class ABall: public AMover, public AGraphics_Object
+class ABall: public AGame_Object
 {
 public:
 	ABall();

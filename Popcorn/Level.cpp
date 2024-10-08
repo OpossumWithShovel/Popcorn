@@ -158,6 +158,26 @@ bool AsLevel::Check_Hit(double next_x_pos, double next_y_pos)
 	return true;
 }
 //------------------------------------------------------------------------------------------------------------
+void AsLevel::Begin_Movement()
+{
+	// Заглушка т.к. этот метод не используется
+}
+//------------------------------------------------------------------------------------------------------------
+void AsLevel::Finish_Movement()
+{
+	// Заглушка т.к. этот метод не используется
+}
+//------------------------------------------------------------------------------------------------------------
+void AsLevel::Advance(double max_speed)
+{
+	// Заглушка т.к. этот метод не используется
+}
+//------------------------------------------------------------------------------------------------------------
+double AsLevel::Get_Speed()
+{
+	return 0.0;  // Заглушка т.к. этот метод не используется
+}
+//------------------------------------------------------------------------------------------------------------
 void AsLevel::Act()
 {
 	Act_Object( (AGraphics_Object **)&Active_Bricks, AsConfig::Max_Active_Bricks_Count, Active_Bricks_Count);
@@ -529,7 +549,7 @@ bool AsLevel::Add_Falling_Letter(int brick_y, int brick_x, EBrick_Type brick_typ
 						break;
 					}
 
-					letter_type = ELetter_Type::G;
+					letter_type = ELetter_Type::L;
 
 					falling_letter = new AFalling_Letter(brick_type, letter_type, letter_x, letter_y);
 					Falling_Letters[i] = falling_letter;
