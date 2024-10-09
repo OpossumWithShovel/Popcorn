@@ -6,16 +6,16 @@
 const double AGate::Max_Gap_Short_Height = 9.0;
 const double AGate::Opening_Short_Step = Max_Gap_Short_Height / (double)(AsConfig::FPS / 2.0);
 const double AGate::Max_Gap_Long_Height = 18.0;
-const double AGate::Opening_Long_Step = Max_Gap_Long_Height / (double)(AsConfig::FPS * 3.0);
+const double AGate::Opening_Long_Step = Max_Gap_Long_Height / (double)(AsConfig::FPS);
 //------------------------------------------------------------------------------------------------------------
-AGate::AGate(int x_pos, int y_pos)
+AGate::AGate(int x_pos, int y_pos, int level_x, int level_y)
 	: Gate_State(EGate_State::Closed), Gate_Transformation(EGate_Transformation::Unknown), Gate_Rect{},
-	X_Pos(x_pos), Y_Pos(y_pos), Origin_Y_Pos(y_pos), Gate_Open_Timer_Tick(0), Gap_Height(0.0)
+	X_Pos(x_pos), Y_Pos(y_pos), Origin_Y_Pos(y_pos), Level_X(level_x), Level_Y(level_y), Gate_Open_Timer_Tick(0), Gap_Height(0.0)
 {
 	Gate_Rect.left = X_Pos * AsConfig::Global_Scale;
 	Gate_Rect.top = (int)(Y_Pos * AsConfig::D_Global_Scale);
-	Gate_Rect.right = Gate_Rect.left + Gate_Width * AsConfig::Global_Scale;
-	Gate_Rect.bottom = Gate_Rect.top + Gate_Height * AsConfig::Global_Scale;
+	Gate_Rect.right = Gate_Rect.left + Width * AsConfig::Global_Scale;
+	Gate_Rect.bottom = Gate_Rect.top + Height * AsConfig::Global_Scale;
 }
 //------------------------------------------------------------------------------------------------------------
 void AGate::Act()
@@ -39,7 +39,7 @@ void AGate::Act()
 			Y_Pos = Origin_Y_Pos - Gap_Height / 2.0;
 
 			Gate_Rect.top = (int)round(Y_Pos * AsConfig::D_Global_Scale);
-			Gate_Rect.bottom = (int)round( ( Origin_Y_Pos + (double)Gate_Height + Gap_Height / 2.0) * AsConfig::D_Global_Scale);
+			Gate_Rect.bottom = (int)round( ( Origin_Y_Pos + (double)Height + Gap_Height / 2.0) * AsConfig::D_Global_Scale);
 		}
 		break;
 
@@ -102,6 +102,14 @@ bool AGate::Is_Gate_Open() const
 		return false;
 }
 //------------------------------------------------------------------------------------------------------------
+bool AGate::Is_Gate_Close() const
+{
+	if (Gate_State == EGate_State::Closed)
+		return true;
+	else
+		return false;
+}
+//------------------------------------------------------------------------------------------------------------
 void AGate::Get_Y_Area(int &gate_top_y, int &gate_low_y) const
 {
 	gate_top_y = Gate_Rect.top;
@@ -141,6 +149,10 @@ void AGate::Act_Opening(bool is_short, bool &correct_pos)
 		if (Gap_Height < max_gap_height)
 		{
 			Gap_Height += opening_step;
+
+			if (Gap_Height > max_gap_height)
+				Gap_Height = max_gap_height;
+
 			correct_pos = true;
 		}
 		else
@@ -164,6 +176,10 @@ void AGate::Act_Opening(bool is_short, bool &correct_pos)
 		if (Gap_Height > 0)
 		{
 			Gap_Height -= opening_step;
+
+			if (Gap_Height < 0.0)
+				Gap_Height = 0.0;
+
 			correct_pos = true;
 		}
 		else
@@ -191,15 +207,15 @@ void AGate::Draw_Cup(HDC hdc, bool is_top) const
 
 	clip_rect.left = X_Pos * scale;
 	clip_rect.top = (int)round(Y_Pos * d_scale);
-	clip_rect.right = clip_rect.left + Gate_Width / 2 * scale;
+	clip_rect.right = clip_rect.left + Width / 2 * scale;
 	clip_rect.bottom = clip_rect.top + cup_height * scale + scale;
 
 	if (! is_top)
 	{
 		if (Gate_State == EGate_State::Long_Open)
-			clip_rect.top = (int)round( ( Y_Pos + (double)Gate_Height + Gap_Height) * d_scale);
+			clip_rect.top = (int)round( ( Y_Pos + (double)Height + Gap_Height) * d_scale);
 		else
-			clip_rect.top = (int)round( ( Y_Pos + (double)Gate_Height) * d_scale);
+			clip_rect.top = (int)round( ( Y_Pos + (double)Height) * d_scale);
 
 		clip_rect.bottom = clip_rect.top - cup_height * scale - scale;
 	}
@@ -208,17 +224,17 @@ void AGate::Draw_Cup(HDC hdc, bool is_top) const
 
 	// чаша левая часть
 	SelectClipRgn(hdc, cup_region);
-	AsTools::Round_Rect(hdc, 0, 1, Gate_Width, 2 * cup_height, AsConfig::White_Color, 3);
-	AsTools::Round_Rect(hdc, 1, 2, Gate_Width - 1, 2 * cup_height - 1, AsConfig::Blue_Color);
+	AsTools::Round_Rect(hdc, 0, 1, Width, 2 * cup_height, AsConfig::White_Color, 3);
+	AsTools::Round_Rect(hdc, 1, 2, Width - 1, 2 * cup_height - 1, AsConfig::Blue_Color);
 
 	// чаша правая часть
-	clip_rect.left += Gate_Width / 2 * scale;
-	clip_rect.right += Gate_Width / 2 * scale;
+	clip_rect.left += Width / 2 * scale;
+	clip_rect.right += Width / 2 * scale;
 
 	cup_region = CreateRectRgnIndirect(&clip_rect);
 	SelectClipRgn(hdc, cup_region);
 
-	AsTools::Round_Rect(hdc, 0, 1, Gate_Width, 2 * cup_height, AsConfig::Blue_Color, 3);
+	AsTools::Round_Rect(hdc, 0, 1, Width, 2 * cup_height, AsConfig::Blue_Color, 3);
 
 	SelectClipRgn(hdc, 0);
 
@@ -246,9 +262,9 @@ void AGate::Draw_Part(HDC hdc, bool is_top)
 		xform.eM22 = -xform.eM22;
 
 		if (Gate_State == EGate_State::Long_Open)
-			xform.eDy = (float)round( (Y_Pos + (double)Gate_Height + Gap_Height) * d_scale - 1.0);
+			xform.eDy = (float)round( (Y_Pos + (double)Height + Gap_Height) * d_scale - 1.0);
 		else
-			xform.eDy = (float)round( (Y_Pos + (double)Gate_Height) * d_scale - 1.0);
+			xform.eDy = (float)round( (Y_Pos + (double)Height) * d_scale - 1.0);
 	}
 
 	GetWorldTransform(hdc, &old_xform);
@@ -365,7 +381,7 @@ void AGate::Draw_Charge(HDC hdc) const
 	if (ratio < 0.2 || ratio > 0.9)
 		return;
 
-	field_y = (int)(Origin_Y_Pos + (double)Gate_Height / 2.0 - Gap_Height / 2.0);
+	field_y = (int)(Origin_Y_Pos + (double)Height / 2.0 - Gap_Height / 2.0);
 
 	for (i = 0; i < 4; i++)
 	{

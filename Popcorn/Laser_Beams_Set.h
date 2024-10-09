@@ -3,7 +3,7 @@
 #include "Laser_Beam.h"
 
 //------------------------------------------------------------------------------------------------------------
-class ALaser_Beams_Set: public AsGame_Objects_Set
+class ALaser_Beams_Set: public AGame_Objects_Set
 {
 public:
 	void Fire(double left_gun_x_pos, double right_gun_x_pos);

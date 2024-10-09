@@ -32,6 +32,8 @@ public:
 	bool Get_Falling_Letter(int &index, AFalling_Letter **falling_letter) const;
 	void Stop();
 
+	static bool Has_Brick_At(int level_x, int level_y);
+
 	static char Test_Level[AsConfig::Level_Height][AsConfig::Level_Width];
 	static char Level_01[AsConfig::Level_Height][AsConfig::Level_Width];
 
@@ -74,5 +76,7 @@ private:
 	AFalling_Letter *Falling_Letters[AsConfig::Max_Falling_Letters_count];
 
 	static char Current_Level[AsConfig::Level_Height][AsConfig::Level_Width];
+
+	static AsLevel *Level;
 };
 //------------------------------------------------------------------------------------------------------------

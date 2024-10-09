@@ -130,6 +130,7 @@ int AsEngine::On_Timer()
 		{
 			Ball_Set.Set_On_Platform(Platform.Get_Middle_Pos());
 			Game_State = EGame_State::Play_Level;
+			Monsters_Set.Activate(3);
 		}
 		break;
 
@@ -187,9 +188,6 @@ void AsEngine::Restart_Level()
 {
 	Game_State = EGame_State::Restart_Level;
 	Border.Open_Gate(7, true);
-	Border.Open_Gate(5, false);
-
-	Monsters_Set.Let_Out(4);
 }
 //------------------------------------------------------------------------------------------------------------
 void AsEngine::Advance_Movers()
