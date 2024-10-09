@@ -39,7 +39,8 @@ char AsLevel::Level_01[AsConfig::Level_Height][AsConfig::Level_Width] =
 //------------------------------------------------------------------------------------------------------------
 
 // AsLevel
-char AsLevel::Current_Level[AsConfig::Level_Height][AsConfig::Level_Width];
+AsLevel *AsLevel::Level = 0;
+char AsLevel::Current_Level[AsConfig::Level_Height][AsConfig::Level_Width] = {};
 //------------------------------------------------------------------------------------------------------------
 AsLevel::~AsLevel()
 {
@@ -53,6 +54,7 @@ AsLevel::AsLevel()
 	Current_Brick_Left_X(0.0), Current_Brick_Right_X(0.0), Current_Brick_Top_Y(0.0), Current_Brick_Low_Y(0.0),
 	Level_Rect{}, Active_Bricks_Count(0), Falling_Letters_Count(0), Teleport_Bricks_Count(0), Teleport_Bricks_Pos(0), Active_Bricks{}, Falling_Letters{}
 {
+	Level = this;
 }
 //------------------------------------------------------------------------------------------------------------
 bool AsLevel::Check_Hit(double next_x_pos, double next_y_pos, ABall *ball)
@@ -325,6 +327,24 @@ bool AsLevel::Get_Falling_Letter(int &index, AFalling_Letter **falling_letter) c
 void AsLevel::Stop()
 {
 	Need_To_Cansel_All = true;
+}
+//------------------------------------------------------------------------------------------------------------
+bool AsLevel::Has_Brick_At(int level_x, int level_y)
+{
+	EBrick_Type brick_type;
+
+	if (level_x < 0 || level_x > AsConfig::Level_Width - 1)
+		return false;
+
+	if (level_y < 0 || level_y > AsConfig::Level_Height - 1)
+		return false;
+
+	brick_type = (EBrick_Type)Level->Current_Level[level_y][level_x];
+
+	if (brick_type == EBrick_Type::None)
+		return false;
+	else
+		return true;
 }
 //------------------------------------------------------------------------------------------------------------
 bool AsLevel::On_Hit(int brick_y, int brick_x, ABall *ball, bool vertical_hit)
@@ -654,6 +674,8 @@ void AsLevel::Draw_Brick(HDC hdc, RECT &brick_rect,int level_x, int level_y)
 	switch (brick_type)
 	{
 	case EBrick_Type::None:
+		break;
+
 	case EBrick_Type::Red:
 	case EBrick_Type::Blue:
 		AActive_Brick_Fading::Draw_In_Level(hdc, brick_rect, brick_type);
