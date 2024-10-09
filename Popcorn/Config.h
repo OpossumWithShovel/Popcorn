@@ -11,7 +11,7 @@ public:
 	static const AColor BG_Color, Red_Color, Blue_Color, White_Color, Symbol_Color;
 	static const AColor Teleport_Color, Red_Highlight, Blue_Highlight, Laser_Color;
 	static const AColor Gate_Highlight_Color;
-	static const AColor Cornea_Color, Iris_Color;
+	static const AColor Cornea_Color, Iris_Color, Explode_Outline_Color;
 	static HWND Hwnd;
 
 	static const double D_Global_Scale;
@@ -71,7 +71,10 @@ public:
 	static void Rect(HDC hdc, int x, int y, int width, int height, const AColor &color);
 	static void Ellipse(HDC hdc, RECT &rect, const AColor &color);
 	static void Ellipse(HDC hdc, int x, int y, int width, int height, const AColor &color);
+	static void Ellipse_Outline(HDC hdc, RECT &rect, const AColor &color);
 	static void Invalidate_Rect(RECT &rect);
+	static unsigned char Get_Fading_Channel(unsigned char channel, unsigned char bg_channel, int step, int steps_count);
+	static void Get_Fading_Color(const AColor &origin_color, int step, AColor &modified_color, int steps_count);
 
 	static void Throw();
 };

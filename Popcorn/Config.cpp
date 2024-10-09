@@ -15,8 +15,9 @@ const AColor AsConfig::Red_Highlight(AsConfig::Red_Color, 3 * AsConfig::Global_S
 const AColor AsConfig::Blue_Highlight(AsConfig::Blue_Color, AsConfig::Global_Scale - 1);
 const AColor AsConfig::Laser_Color(AsConfig::White_Color, AsConfig::Global_Scale);
 const AColor AsConfig::Gate_Highlight_Color(AsConfig::White_Color, AsConfig::Global_Scale);
-const AColor AsConfig::Cornea_Color(AsConfig::BG_Color, AsConfig::White_Color, AsConfig::Global_Scale - 1);
-const AColor AsConfig::Iris_Color(AsConfig::BG_Color, AsConfig::Blue_Color, AsConfig::Global_Scale - 1);
+const AColor AsConfig::Cornea_Color(AsConfig::BG_Color, AsConfig::White_Color, AsConfig::Global_Scale * 2 / 3);
+const AColor AsConfig::Iris_Color(AsConfig::BG_Color, AsConfig::Blue_Color, AsConfig::Global_Scale * 2 / 3);
+const AColor AsConfig::Explode_Outline_Color(AsConfig::White_Color);  //!!!
 
 HWND AsConfig::Hwnd;
 
@@ -83,9 +84,31 @@ void AsTools::Ellipse(HDC hdc, int x, int y, int width, int height, const AColor
 	::Ellipse(hdc, x * scale, y * scale, (x + width) * scale - 1, (y + height) * scale - 1);
 }
 //------------------------------------------------------------------------------------------------------------
+void AsTools::Ellipse_Outline(HDC hdc, RECT &rect, const AColor &color)
+{
+	color.Select(hdc);
+	Arc(hdc, rect.left, rect.top, rect.right - 1, rect.bottom - 1, 0, 0, 0, 0);
+}
+//------------------------------------------------------------------------------------------------------------
 void AsTools::Invalidate_Rect(RECT &rect)
 {
 	InvalidateRect(AsConfig::Hwnd, &rect, FALSE);
+}
+//------------------------------------------------------------------------------------------------------------
+unsigned char AsTools::Get_Fading_Channel(unsigned char channel, unsigned char bg_channel, int step, int steps_count)
+{
+	return channel - step * (channel - bg_channel) / (steps_count - 1);
+}
+//------------------------------------------------------------------------------------------------------------
+void AsTools::Get_Fading_Color(const AColor &origin_color, int step, AColor &modified_color, int steps_count)
+{
+	unsigned char r, g, b;
+
+	r = Get_Fading_Channel(origin_color.R, AsConfig::BG_Color.R, step, steps_count);
+	g = Get_Fading_Channel(origin_color.G, AsConfig::BG_Color.G, step, steps_count);
+	b = Get_Fading_Channel(origin_color.B, AsConfig::BG_Color.B, step, steps_count);
+
+	modified_color = AColor(r, g, b);
 }
 //------------------------------------------------------------------------------------------------------------
 void AsTools::Throw()

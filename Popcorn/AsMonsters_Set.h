@@ -2,6 +2,55 @@
 
 #include "Border.h"
 
+enum class EExplosive_Ball_State: unsigned char
+{
+	Disable,
+	Waiting,
+	Expanding,
+	Fading
+};
+//------------------------------------------------------------------------------------------------------------
+class AExplosive_Ball: public AGraphics_Object
+{
+public:
+	AExplosive_Ball();
+
+	virtual void Act();
+	virtual void Clear(HDC hdc, RECT &paint_area);
+	virtual void Draw(HDC hdc, RECT &paint_area);
+	virtual bool Is_Finished();
+
+	void Explode(double x_pos, double y_pos, double max_size, int explode_delay_ticks, bool is_red);
+
+	static void Setup_Colors();
+
+private:
+	void Act_Expanding_State();
+	void Act_Fading_State();
+	void Update_Rect();
+
+	EExplosive_Ball_State Explosive_Ball_State;
+
+	bool Is_Red;
+
+	int Start_Explode_Tick, Start_Fading_Tick, End_Explode_Tick;
+
+	double X_Pos, Y_Pos;
+	double Size, Max_Size;
+
+	RECT Curr_Rect;
+
+	AColor *Curr_Ball_Color;
+	AColor *Curr_Outline_Color;
+
+	static const int Expanding_Timeout = AsConfig::FPS / 2;
+	static const int Fading_Timeout = AsConfig::FPS / 2;
+	static const int Fading_Steps_Count = Fading_Timeout;
+
+	static AColor Fading_Red_Colors[Fading_Steps_Count];
+	static AColor Fading_Blue_Colors[Fading_Steps_Count];
+	static AColor Fading_Outline_Colors[Fading_Steps_Count];
+};
 //------------------------------------------------------------------------------------------------------------
 enum class EEye_State: unsigned char
 {
@@ -9,6 +58,13 @@ enum class EEye_State: unsigned char
 	Opening,
 	Staring,
 	Closing
+};
+//------------------------------------------------------------------------------------------------------------
+enum class EMonster_State: unsigned char
+{
+	Missing,
+	Alive,
+	Destroing
 };
 //------------------------------------------------------------------------------------------------------------
 class AMonster: public AGame_Object
@@ -26,12 +82,17 @@ public:
 	virtual void Draw(HDC hdc, RECT &paint_area);
 	virtual bool Is_Finished();
 
-	void Let_Out(int gate_x_pos, int gate_y_pos);
+	void Activate(int gate_x_pos, int gate_y_pos);
+	bool Is_Active() const;
+	void Destroy();
 
-	bool Is_Active;
 private:
-	void Redraw();
+	void Act_Alive();
+	void Act_Destroing();
+	void Draw_Alive(HDC hdc);
+	void Draw_Destroing(HDC hdc, RECT &paint_area);
 
+	EMonster_State Monster_State;
 	EEye_State Eye_State;
 
 	int X_Pos, Y_Pos;
@@ -40,15 +101,17 @@ private:
 
 	double Cornea_Height;
 
-	RECT Monster_Rect, Prev_Monster_Rect;
+	RECT Monster_Rect;
 
+	static const int Monster_Size = 16;
 	static const int Blinks_Stages_Count = 7;
+	static const int Max_Explosive_Balls_Count = 20;
 	int Blink_Ticks[Blinks_Stages_Count];
+
+	AExplosive_Ball Explosive_Balls[Max_Explosive_Balls_Count];
 
 	static const double Max_Cornea_Height;
 
-	static const int Monster_Width = 16;
-	static const int Monster_Height = 16;
 	static const double Blink_Timeouts[Blinks_Stages_Count];
 	static const EEye_State Blink_States[Blinks_Stages_Count];
 };

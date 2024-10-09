@@ -24,6 +24,7 @@ void AsEngine::Init_Engine(HWND hwnd)
 	AFalling_Letter::Init();
 
 	AActive_Brick_Fading::Setup_Colors();
+	AExplosive_Ball::Setup_Colors();
 
 	Level.Init();
 	Platform.Init(&Ball_Set, &Laser_Beams_Set);
