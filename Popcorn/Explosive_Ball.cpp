@@ -36,8 +36,8 @@ void AExplosive_Ball::Act()
 	case EExplosive_Ball_State::Fading:
 		if (AsConfig::Current_Timer_Tick >= End_Explode_Tick)
 			Explosive_Ball_State = EExplosive_Ball_State::Idle;
-
-		Act_Fading_State();
+		else
+			Act_Fading_State();
 		break;
 
 	default:

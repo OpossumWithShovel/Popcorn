@@ -32,6 +32,18 @@ bool AsMonsters_Set::Check_Hit(double next_x_pos, double next_y_pos)
 	return false;
 }
 //------------------------------------------------------------------------------------------------------------
+bool AsMonsters_Set::Check_Hit(RECT &rect)
+{
+	int i;
+
+	for (i = 0; i < AsConfig::Max_Monsters_Count; i++)
+		if (Monsters[i].Is_Active() )
+			if (Monsters[i].Check_Hit(rect) )
+				return true;
+
+	return false;
+}
+//------------------------------------------------------------------------------------------------------------
 void AsMonsters_Set::Act()
 {
 	int i;
@@ -41,6 +53,7 @@ void AsMonsters_Set::Act()
 	{
 	case EMonster_Set_State::Idle:
 		break;
+
 
 	case EMonster_Set_State::Select_Next_Gate:
 		curr_alive_monsters_count = 0;
@@ -55,6 +68,7 @@ void AsMonsters_Set::Act()
 		}
 		break;
 
+
 	case EMonster_Set_State::Waitinig_For_Open_Gate:
 		if (Border->Is_Gate_Open(Current_Gate) )
 		{
@@ -63,10 +77,21 @@ void AsMonsters_Set::Act()
 		}
 		break;
 
+
 	case EMonster_Set_State::Waitinig_For_Close_Gate:
 		if (Border->Is_Gate_Close(Current_Gate) )
 			Monster_Set_State = EMonster_Set_State::Select_Next_Gate;
 		break;
+
+
+	case EMonster_Set_State::Waiting_For_Destroy_All:
+		for (i = 0; i < AsConfig::Max_Monsters_Count; i++)
+			if ( ! Monsters[i].Is_Finished() )
+				break;
+		
+		Monster_Set_State = EMonster_Set_State::Idle;
+		return;
+
 
 	default:
 		AsTools::Throw();
@@ -111,8 +136,17 @@ void AsMonsters_Set::Let_Out(int gate_index)
 
 	Border->Get_Gate_Pos(gate_index, gate_x_pos, gate_y_pos);
 
-	curr_monster->Let_Out(gate_x_pos, gate_y_pos, is_gate_left);  //!!! moving right
-	//curr_monster->Destroy();  //!!! monster
+	curr_monster->Let_Out(gate_x_pos, gate_y_pos, is_gate_left);
+}
+//------------------------------------------------------------------------------------------------------------
+void AsMonsters_Set::Destroy_All()
+{
+	int i;
+
+	for (i = 0; i < AsConfig::Max_Monsters_Count; i++)
+		Monsters[i].Destroy();
+
+	Monster_Set_State =  EMonster_Set_State::Waiting_For_Destroy_All;
 }
 //------------------------------------------------------------------------------------------------------------
 bool AsMonsters_Set::Get_Next_Obj(int &index, AGame_Object **game_obj)

@@ -52,6 +52,22 @@ bool AMonster::Check_Hit(double next_x_pos, double next_y_pos)
 		return false;
 }
 //------------------------------------------------------------------------------------------------------------
+bool AMonster::Check_Hit(RECT &rect)
+{
+	RECT intersection_rect;
+
+	if (! (Monster_State == EMonster_State::Alive || Monster_State == EMonster_State::Emitting) )
+		return false;
+
+	if (IntersectRect(&intersection_rect, &rect, &Monster_Rect) )
+	{
+		Destroy();
+		return true;
+	}
+	else
+		return false;
+}
+//------------------------------------------------------------------------------------------------------------
 void AMonster::Begin_Movement()
 {
 	if (Monster_State == EMonster_State::Missing)
@@ -123,8 +139,8 @@ void AMonster::Advance(double max_speed)
 
 	if (next_y_pos < AsConfig::Level_Y_Offset - 1)
 		next_y_pos = AsConfig::Level_Y_Offset - 1;
-	else if (next_y_pos + Monster_Size > AsConfig::Play_Area_Max_Y_Offset)
-		next_y_pos = AsConfig::Play_Area_Max_Y_Offset - Monster_Size;
+	else if (next_y_pos + Monster_Size > AsConfig::Floor_Y_Pos)
+		next_y_pos = AsConfig::Floor_Y_Pos - Monster_Size;
 
 	X_Pos = next_x_pos;
 	Y_Pos = next_y_pos;
@@ -201,7 +217,10 @@ void AMonster::Draw(HDC hdc, RECT &paint_area)
 //------------------------------------------------------------------------------------------------------------
 bool AMonster::Is_Finished()
 {
-	return false;  // Заглушка
+	if (Monster_State == EMonster_State::Missing)
+		return true;
+	else
+		return false;
 }
 //------------------------------------------------------------------------------------------------------------
 void AMonster::Let_Out(int gate_x_pos, int gate_y_pos, bool left_gate)
@@ -259,6 +278,9 @@ void AMonster::Destroy()
 	int size;
 	int delay;
 	
+	if (! (Monster_State == EMonster_State::Alive || Monster_State == EMonster_State::Emitting) )
+		return;
+
 	Monster_State = EMonster_State::Destroing;
 
 	for (i = 0; i < Max_Explosive_Balls_Count; i++)

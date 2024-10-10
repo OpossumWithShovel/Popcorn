@@ -12,6 +12,7 @@ public:
 	AsPlatform();
 
 	virtual bool Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *ball);
+
 	virtual void Begin_Movement();
 	virtual void Finish_Movement();
 	virtual void Advance(double max_speed);
@@ -35,6 +36,8 @@ public:
 	double Get_Middle_Pos() const;
 	double Get_X_Offset() const;
 	void On_Space_Key(bool key_down);
+
+	static AHit_Checker_List Hit_Checker_List;
 
 private:
 	bool Set_Transformation_State(EPlatform_State new_state, EPlatform_Transformation &transformation_state);

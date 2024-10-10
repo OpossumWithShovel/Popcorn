@@ -1,6 +1,7 @@
 ﻿#include "Platform.h"
 
 // AsPlatform
+AHit_Checker_List AsPlatform::Hit_Checker_List;
 const double AsPlatform::Platform_Normal_Speed = 3.0;
 //------------------------------------------------------------------------------------------------------------
 AsPlatform::AsPlatform()
@@ -101,6 +102,8 @@ void AsPlatform::Advance(double max_speed)
 		Speed = 0.0;
 		Platform_State.Moving = EPlatform_Moving_State::Stopping;
 	}
+
+	Hit_Checker_List.Check_Hit(Curr_Rect);
 }
 //-----------------------------------------------------------------------------------------------------------
 bool AsPlatform::Correct_Platform_Pos()
@@ -358,7 +361,7 @@ void AsPlatform::Set_State(EPlatform_State new_state)
 
 	case EPlatform_State::Glue:
 		if (Set_Transformation_State(new_state, Platform_State.Glue) )
-			return;	
+			return;
 		break;
 
 
@@ -372,7 +375,7 @@ void AsPlatform::Set_State(EPlatform_State new_state)
 
 	case EPlatform_State::Laser:
 		if (Set_Transformation_State(new_state, Platform_State.Laser) )
-			return;	
+			return;
 		break;
 	}
 

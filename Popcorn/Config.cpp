@@ -2,7 +2,7 @@
 
 // AsConfig
 //------------------------------------------------------------------------------------------------------------
-bool AsConfig::Level_Has_Floor = true;
+bool AsConfig::Level_Has_Floor = false;
 int AsConfig::Current_Timer_Tick = 0;
 
 const AColor AsConfig::BG_Color(0, 0, 0);
@@ -167,6 +167,11 @@ bool AHit_Checker::Check_Hit(double next_x_pos, double next_y_pos)
 	return false;
 }
 //------------------------------------------------------------------------------------------------------------
+bool AHit_Checker::Check_Hit(RECT &rect)
+{
+	return false;
+}
+//------------------------------------------------------------------------------------------------------------
 bool AHit_Checker::Hit_Circle_On_Line(double distance_to_line, double ball_center_pos, double line_start_pos, double line_end_pos, double radius, double &x)
 {// checking intersection line (that has a start coordinate (line_start_pos) and end coordinate (line_end_pos)) with ball (that has radius)
 
@@ -224,6 +229,17 @@ bool AHit_Checker_List::Check_Hit(double x_pos, double y_pos, ABall_Object *ball
 
 	for (i = 0; i < Hit_Checkers_Count; i++)
 		if (Hit_Checkers[i]->Check_Hit(x_pos, y_pos, ball) )
+			return true;
+
+	return false;
+}
+//------------------------------------------------------------------------------------------------------------
+bool AHit_Checker_List::Check_Hit(RECT &rect)
+{
+	int i;
+
+	for (i = 0; i < Hit_Checkers_Count; i++)
+		if (Hit_Checkers[i]->Check_Hit(rect) )
 			return true;
 
 	return false;

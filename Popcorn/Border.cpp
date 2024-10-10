@@ -157,24 +157,25 @@ int AsBorder::Long_Open_Gate()
 	{
 		curr_gate = Gates[gate_index];
 
-		if (Is_Gate_Close(gate_index) )
-		{			
-			if (curr_gate->Level_X == -1 || curr_gate->Level_Y == -1)
-			{
-				got_gate = true;
-				break;
-			}
+		if (gate_index != AsConfig::Gates_Count - 1)
+			if (Is_Gate_Close(gate_index) )
+			{			
+				if (curr_gate->Level_X == -1 || curr_gate->Level_Y == -1)
+				{
+					got_gate = true;
+					break;
+				}
 
-			AsLevel::Has_Brick_At(monster_rect);
+				AsLevel::Has_Brick_At(monster_rect);
 
-			if ( ! AsLevel::Has_Brick_At(curr_gate->Level_X, curr_gate->Level_Y) &&
-				! AsLevel::Has_Brick_At(curr_gate->Level_X, curr_gate->Level_Y + 1) &&
-				! AsLevel::Has_Brick_At(curr_gate->Level_X, curr_gate->Level_Y - 1))
-			{
-				got_gate = true;
-				break;
+				if ( ! AsLevel::Has_Brick_At(curr_gate->Level_X, curr_gate->Level_Y) &&
+					! AsLevel::Has_Brick_At(curr_gate->Level_X, curr_gate->Level_Y + 1) &&
+					! AsLevel::Has_Brick_At(curr_gate->Level_X, curr_gate->Level_Y - 1))
+				{
+					got_gate = true;
+					break;
+				}
 			}
-		}
 
 		++gate_index;
 
