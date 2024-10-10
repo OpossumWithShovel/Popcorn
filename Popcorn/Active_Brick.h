@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ball.h"
+#include "Config.h"
 
 //------------------------------------------------------------------------------------------------------------
 enum class EBrick_Type: unsigned char
@@ -156,7 +156,7 @@ class AActive_Brick_Teleport: public AActive_Brick
 {
 public:
 	~AActive_Brick_Teleport();
-	AActive_Brick_Teleport(int brick_y, int brick_x, ABall *ball, AActive_Brick_Teleport *destination_teleport);
+	AActive_Brick_Teleport(int brick_y, int brick_x, ABall_Object *ball, AActive_Brick_Teleport *destination_teleport);
 
 	virtual void Act();
 	virtual void Draw(HDC hdc, RECT &paint_area);
@@ -168,7 +168,7 @@ public:
 
 private:
 	ETeleport_State Teleport_State;
-	ABall *Ball;
+	ABall_Object *Ball;
 	AActive_Brick_Teleport *Destination_Teleport;
 
 	int Animation_Step;

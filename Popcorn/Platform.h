@@ -11,7 +11,8 @@ class AsPlatform: public AHit_Checker, public AGame_Object
 public:
 	AsPlatform();
 
-	virtual bool Check_Hit(double next_x_pos, double next_y_pos, ABall *ball);
+	virtual bool Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *ball);
+
 	virtual void Begin_Movement();
 	virtual void Finish_Movement();
 	virtual void Advance(double max_speed);
@@ -36,6 +37,8 @@ public:
 	double Get_X_Offset() const;
 	void On_Space_Key(bool key_down);
 
+	static AHit_Checker_List Hit_Checker_List;
+
 private:
 	bool Set_Transformation_State(EPlatform_State new_state, EPlatform_Transformation &transformation_state);
 	void Act_Rolling_State();
@@ -44,7 +47,6 @@ private:
 	void Draw_Roll_In_Substate(HDC hdc);
 	void Draw_Normal_State(HDC hdc);
 	void Draw_Meltdown_State(HDC hdc, RECT &paint_area);
-	bool Reflect_From_Circle(double next_x_pos, double next_y_pos, double circle_x_offset, ABall *ball) const;
 	double Get_Current_Width() const;
 	bool Correct_Platform_Pos();
 

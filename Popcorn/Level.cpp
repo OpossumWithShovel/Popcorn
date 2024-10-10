@@ -57,7 +57,7 @@ AsLevel::AsLevel()
 	Level = this;
 }
 //------------------------------------------------------------------------------------------------------------
-bool AsLevel::Check_Hit(double next_x_pos, double next_y_pos, ABall *ball)
+bool AsLevel::Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *ball)
 {
 	int i, j;
 	double min_ball_x, max_ball_x;
@@ -67,13 +67,13 @@ bool AsLevel::Check_Hit(double next_x_pos, double next_y_pos, ABall *ball)
 	bool got_horizontal_hit, got_vertical_hit;
 	double horizontal_reflection_pos, vertical_reflection_pos;
 
-	if (next_y_pos - ball->Radius > AsConfig::Bricks_Area_Y_Offset + (AsConfig::Level_Height - 1) * AsConfig::Cell_Height + AsConfig::Brick_Height)
+	if (next_y_pos - AsConfig::Ball_Radius > AsConfig::Bricks_Area_Y_Offset + (AsConfig::Level_Height - 1) * AsConfig::Cell_Height + AsConfig::Brick_Height)
 		return false;
 
-	min_ball_x = next_x_pos - ball->Radius;
-	max_ball_x = next_x_pos + ball->Radius;
-	min_ball_y = next_y_pos - ball->Radius;
-	max_ball_y = next_y_pos + ball->Radius;
+	min_ball_x = next_x_pos - AsConfig::Ball_Radius;
+	max_ball_x = next_x_pos + AsConfig::Ball_Radius;
+	min_ball_y = next_y_pos - AsConfig::Ball_Radius;
+	max_ball_y = next_y_pos + AsConfig::Ball_Radius;
 
 	min_level_x = (int)( (min_ball_x - AsConfig::Bricks_Area_X_Offset) / (double)AsConfig::Cell_Width);
 	max_level_x = (int)( (max_ball_x - AsConfig::Bricks_Area_X_Offset) / (double)AsConfig::Cell_Width);
@@ -347,7 +347,31 @@ bool AsLevel::Has_Brick_At(int level_x, int level_y)
 		return true;
 }
 //------------------------------------------------------------------------------------------------------------
-bool AsLevel::On_Hit(int brick_y, int brick_x, ABall *ball, bool vertical_hit)
+bool AsLevel::Has_Brick_At(RECT &rect)
+{
+	int i, j;
+	int level_x_offset = AsConfig::Bricks_Area_X_Offset * AsConfig::Global_Scale;
+	int level_y_offset = AsConfig::Bricks_Area_Y_Offset * AsConfig::Global_Scale;
+	int cell_width = AsConfig::Cell_Width * AsConfig::Global_Scale;
+	int cell_height = AsConfig::Cell_Height * AsConfig::Global_Scale;
+	int min_level_x, max_level_x;
+	int min_level_y, max_level_y;
+
+	min_level_x = (int)( (double)(rect.left - level_x_offset) / (double)cell_width);
+	max_level_x = (int)( (double)(rect.right - level_x_offset) / (double)cell_width);
+	min_level_y = (int)( (double)(rect.top - level_y_offset) / (double)cell_height);
+	max_level_y = (int)( (double)(rect.bottom - level_y_offset) / (double)cell_height);
+
+
+	for (i = min_level_y; i <= max_level_y; i++)
+		for (j = min_level_x; j <= max_level_x; j++)
+			if (Has_Brick_At(j, i) )
+				return true;
+
+	return false;
+}
+//------------------------------------------------------------------------------------------------------------
+bool AsLevel::On_Hit(int brick_y, int brick_x, ABall_Object *ball, bool vertical_hit)
 {
 	bool can_reflect = true;
 	EBrick_Type brick_type;
@@ -386,7 +410,7 @@ void AsLevel::On_Hit(int level_y, int level_x)
 	Redraw_Brick(level_y, level_x);
 }
 //------------------------------------------------------------------------------------------------------------
-bool AsLevel::Create_Active_Brick(int brick_y, int brick_x, EBrick_Type brick_type, ABall *ball, bool vertical_hit)
+bool AsLevel::Create_Active_Brick(int brick_y, int brick_x, EBrick_Type brick_type, ABall_Object *ball, bool vertical_hit)
 {
 	AActive_Brick *active_brick = 0;
 
@@ -442,7 +466,7 @@ bool AsLevel::Create_Active_Brick(int brick_y, int brick_x, EBrick_Type brick_ty
 	return true;
 }
 //------------------------------------------------------------------------------------------------------------
-void AsLevel::Add_Active_Brick_Teleport(int source_x, int source_y, ABall *ball, bool vertical_hit)
+void AsLevel::Add_Active_Brick_Teleport(int source_x, int source_y, ABall_Object *ball, bool vertical_hit)
 {
 	int i;
 	int dest_x, dest_y;
@@ -610,13 +634,13 @@ AActive_Brick_Teleport *AsLevel::Select_Destination_Teleport(int source_y, int s
 	return new AActive_Brick_Teleport(Teleport_Bricks_Pos[dest_index].Y, Teleport_Bricks_Pos[dest_index].X, 0, 0);
 }
 //------------------------------------------------------------------------------------------------------------
-bool AsLevel::Check_Vertical_Hit(double next_x_pos, double next_y_pos, int level_x, int level_y, double &reflection_pos, ABall *ball)
+bool AsLevel::Check_Vertical_Hit(double next_x_pos, double next_y_pos, int level_x, int level_y, double &reflection_pos, ABall_Object *ball)
 {
 	double direction = ball->Get_Direction();
 
 	if (ball->Is_Move_Up())
 	{
-		if (Hit_Circle_On_Line(next_y_pos - Current_Brick_Low_Y, next_x_pos, Current_Brick_Left_X, Current_Brick_Right_X, ball->Radius, reflection_pos))
+		if (Hit_Circle_On_Line(next_y_pos - Current_Brick_Low_Y, next_x_pos, Current_Brick_Left_X, Current_Brick_Right_X, AsConfig::Ball_Radius, reflection_pos))
 		{
 			if (level_y < AsConfig::Level_Height - 1 && Current_Level[level_y + 1][level_x] == 0 /*&& level_x != AsConfig::Level_Width*/ ||
 				level_y == AsConfig::Level_Height - 1)
@@ -627,7 +651,7 @@ bool AsLevel::Check_Vertical_Hit(double next_x_pos, double next_y_pos, int level
 	}
 	else
 	{
-		if (Hit_Circle_On_Line(next_y_pos - Current_Brick_Top_Y, next_x_pos, Current_Brick_Left_X, Current_Brick_Right_X, ball->Radius, reflection_pos) )
+		if (Hit_Circle_On_Line(next_y_pos - Current_Brick_Top_Y, next_x_pos, Current_Brick_Left_X, Current_Brick_Right_X, AsConfig::Ball_Radius, reflection_pos) )
 		{
 			if (level_y > 0 && level_y < AsConfig::Level_Height && Current_Level[level_y - 1][level_x] == 0)
 				return true;
@@ -639,13 +663,13 @@ bool AsLevel::Check_Vertical_Hit(double next_x_pos, double next_y_pos, int level
 	return false;
 }
 //------------------------------------------------------------------------------------------------------------
-bool AsLevel::Check_Horizontal_Hit(double next_x_pos, double next_y_pos, int level_x, int level_y, double &reflection_pos, ABall *ball)
+bool AsLevel::Check_Horizontal_Hit(double next_x_pos, double next_y_pos, int level_x, int level_y, double &reflection_pos, ABall_Object *ball)
 {
 	double direction = ball->Get_Direction();
 
 	if (ball->Is_Move_Left())
 	{
-		if (Hit_Circle_On_Line(next_x_pos - Current_Brick_Right_X, next_y_pos, Current_Brick_Top_Y, Current_Brick_Low_Y, ball->Radius, reflection_pos))
+		if (Hit_Circle_On_Line(next_x_pos - Current_Brick_Right_X, next_y_pos, Current_Brick_Top_Y, Current_Brick_Low_Y, AsConfig::Ball_Radius, reflection_pos))
 		{
 			if (level_x > 0 && level_x < AsConfig::Level_Width - 1 && Current_Level[level_y][level_x + 1] == 0/* && level_x != 0*/)
 				return true;
@@ -655,7 +679,7 @@ bool AsLevel::Check_Horizontal_Hit(double next_x_pos, double next_y_pos, int lev
 	}
 	else
 	{
-		if (Hit_Circle_On_Line(Current_Brick_Left_X - next_x_pos, next_y_pos, Current_Brick_Top_Y, Current_Brick_Low_Y, ball->Radius, reflection_pos) )
+		if (Hit_Circle_On_Line(Current_Brick_Left_X - next_x_pos, next_y_pos, Current_Brick_Top_Y, Current_Brick_Low_Y, AsConfig::Ball_Radius, reflection_pos) )
 		{
 			if (level_x > 0 && level_x < AsConfig::Level_Width && Current_Level[level_y][level_x - 1] == 0)
 				return true;

@@ -26,12 +26,12 @@ public:
 
 	void Set_On_Gun(double x_pos);
 	ELaser_Beam_State Get_State() const;
+	void Disable();
 
 	static AHit_Checker_List Hit_Checker_List;
 
 private:
 	void Redraw_Beam();
-	void Disable();
 
 	ELaser_Beam_State Laser_Beam_State;
 

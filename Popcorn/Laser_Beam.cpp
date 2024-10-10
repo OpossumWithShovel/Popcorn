@@ -111,6 +111,12 @@ ELaser_Beam_State ALaser_Beam::Get_State() const
 	return Laser_Beam_State;
 }
 //------------------------------------------------------------------------------------------------------------
+void ALaser_Beam::Disable()
+{
+	Laser_Beam_State = ELaser_Beam_State::Finalize;
+	Speed = 0.0;
+}
+//------------------------------------------------------------------------------------------------------------
 void ALaser_Beam::Redraw_Beam()
 {
 	Prev_Beam_Rect = Beam_Rect;
@@ -122,11 +128,5 @@ void ALaser_Beam::Redraw_Beam()
 
 	AsTools::Invalidate_Rect(Prev_Beam_Rect);
 	AsTools::Invalidate_Rect(Beam_Rect);
-}
-//------------------------------------------------------------------------------------------------------------
-void ALaser_Beam::Disable()
-{
-	Laser_Beam_State = ELaser_Beam_State::Finalize;
-	Speed = 0.0;
 }
 //------------------------------------------------------------------------------------------------------------

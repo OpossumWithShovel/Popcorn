@@ -6,29 +6,33 @@
 #include <math.h>
 
 //------------------------------------------------------------------------------------------------------------
-class ABall;
-//------------------------------------------------------------------------------------------------------------
-class AHit_Checker
+enum class EBall_State: unsigned char
 {
-public:
-	virtual bool Check_Hit(double next_x_pos, double next_y_pos, ABall *ball) = 0;
-	virtual bool Check_Hit(double next_x_pos, double next_y_pos);
+	Disabled,
 
-	virtual bool Hit_Circle_On_Line(double distance_to_line, double ball_center_pos, double line_start_pos, double line_end_pos, double radius, double &x);
+	Normal,
+	Lost,
+	On_Platform,
+	On_Glue_Platform,
+	On_Parashute,
+	Off_Parashute,
+	Teleporting_Stage_1,
+	Teleporting_Stage_2
 };
 //------------------------------------------------------------------------------------------------------------
-class AHit_Checker_List
+class ABall_Object
 {
 public:
-	AHit_Checker_List();
-
-	void Add_Hit_Checker(AHit_Checker *hit_checker);
-	bool Check_Hit(double x_pos, double y_pos);
-	bool Check_Hit(double x_pos, double y_pos, ABall *ball);
-
-private:
-	int Hit_Checkers_Count;
-	AHit_Checker *Hit_Checkers[3];
+	virtual double Get_Direction() const = 0;
+	virtual void Set_Direction(double new_direction) = 0;
+	virtual EBall_State Get_State() const = 0;
+	virtual void Set_State(EBall_State new_state, double x_pos = 0, double y_pos = 0) = 0;
+	virtual void Reflect(bool from_horizontal) = 0;
+	virtual bool Is_Move_Up() const = 0;
+	virtual bool Is_Move_Left() const = 0;
+	virtual void Set_On_Parashute(int brick_y, int brick_x) = 0;
+	virtual void Get_Center(double &x_pos, double &y_pos) const = 0;
+	virtual void Draw_Teleporting(HDC hdc, int step) const = 0; 
 };
 //------------------------------------------------------------------------------------------------------------
 class AMover

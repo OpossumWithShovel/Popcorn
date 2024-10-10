@@ -33,6 +33,14 @@ void ALaser_Beams_Set::Fire(double left_gun_x_pos, double right_gun_x_pos)
 		AsTools::Throw();
 }
 //------------------------------------------------------------------------------------------------------------
+void ALaser_Beams_Set::Disable_All()
+{
+	int i;
+
+	for (i = 0; i < AsConfig::Max_Laser_Beams_Count; i++)
+		Laser_Beams[i].Disable();
+}
+//------------------------------------------------------------------------------------------------------------
 bool ALaser_Beams_Set::Get_Next_Obj(int &index, AGame_Object **game_obj)
 {
 	if (index < 0 || index >= AsConfig::Max_Laser_Beams_Count)

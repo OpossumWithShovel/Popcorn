@@ -1,6 +1,7 @@
 ﻿#include "Platform.h"
 
 // AsPlatform
+AHit_Checker_List AsPlatform::Hit_Checker_List;
 const double AsPlatform::Platform_Normal_Speed = 3.0;
 //------------------------------------------------------------------------------------------------------------
 AsPlatform::AsPlatform()
@@ -11,20 +12,28 @@ AsPlatform::AsPlatform()
 	Highlight_Color(255, 255, 255), Prev_Rect{}, Curr_Rect{}
 {}
 //------------------------------------------------------------------------------------------------------------
-bool AsPlatform::Check_Hit(double next_x_pos, double next_y_pos, ABall *ball)
+bool AsPlatform::Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *ball)
 {
 	double inner_left_x, inner_right_x;
 	double inner_top_y, inner_low_y;
 	double reflection_pos;
+	double circle_x, circle_y;
+	double circle_radius;
+	double right_circle_x_offset;
 
-	if (next_y_pos + ball->Radius < AsConfig::Platform_Y_Pos)
+	if (next_y_pos + AsConfig::Ball_Radius < AsConfig::Platform_Y_Pos)
 		return false;
 
+	circle_radius = (double)AsConfig::Platform_Circle_Diameter / 2.0;
+	circle_x = (double)X_Pos + circle_radius;
+	circle_y = (double)AsConfig::Platform_Y_Pos + circle_radius;
+
 	// Проверка столкновения с шариком платформы
-	if(Reflect_From_Circle(next_x_pos, next_y_pos, 0.0, ball) )
+	if(AsTools::Reflect_From_Circle(next_x_pos, next_y_pos, circle_radius, circle_x, circle_y, ball) )
 		goto _on_hit_exit;  // Левый
 
-	if(Reflect_From_Circle(next_x_pos, next_y_pos, Get_Current_Width() - AsConfig::Platform_Circle_Diameter, ball) )
+	right_circle_x_offset = Get_Current_Width() - AsConfig::Platform_Circle_Diameter;
+	if(AsTools::Reflect_From_Circle(next_x_pos, next_y_pos, circle_radius, circle_x + right_circle_x_offset, circle_y, ball) )
 		goto _on_hit_exit;  // Правый
 
 	inner_top_y = AsConfig::Platform_Y_Pos + 1;
@@ -33,7 +42,7 @@ bool AsPlatform::Check_Hit(double next_x_pos, double next_y_pos, ABall *ball)
 	inner_left_x = X_Pos + (double)AsConfig::Platform_Circle_Diameter - 1.0;
 	inner_right_x = X_Pos + (double)(Get_Current_Width() - AsConfig::Platform_Circle_Diameter + 1);
 
-	if (Hit_Circle_On_Line(next_y_pos - inner_top_y, next_x_pos, inner_left_x, inner_right_x, ball->Radius, reflection_pos) )
+	if (Hit_Circle_On_Line(next_y_pos - inner_top_y, next_x_pos, inner_left_x, inner_right_x, AsConfig::Ball_Radius, reflection_pos) )
 	{
 		if (Platform_State == EPlatform_State::Glue && Platform_State.Glue == EPlatform_Transformation::Active)
 		{
@@ -45,7 +54,7 @@ bool AsPlatform::Check_Hit(double next_x_pos, double next_y_pos, ABall *ball)
 		ball->Reflect(true);
 		goto _on_hit_exit;
 	}
-	else if (Hit_Circle_On_Line(next_y_pos - inner_low_y, next_x_pos, inner_left_x, inner_right_x, ball->Radius, reflection_pos) )
+	else if (Hit_Circle_On_Line(next_y_pos - inner_low_y, next_x_pos, inner_left_x, inner_right_x, AsConfig::Ball_Radius, reflection_pos) )
 	{
 		ball->Reflect(true);
 		goto _on_hit_exit;
@@ -93,6 +102,8 @@ void AsPlatform::Advance(double max_speed)
 		Speed = 0.0;
 		Platform_State.Moving = EPlatform_Moving_State::Stopping;
 	}
+
+	Hit_Checker_List.Check_Hit(Curr_Rect);
 }
 //-----------------------------------------------------------------------------------------------------------
 bool AsPlatform::Correct_Platform_Pos()
@@ -350,7 +361,7 @@ void AsPlatform::Set_State(EPlatform_State new_state)
 
 	case EPlatform_State::Glue:
 		if (Set_Transformation_State(new_state, Platform_State.Glue) )
-			return;	
+			return;
 		break;
 
 
@@ -364,7 +375,7 @@ void AsPlatform::Set_State(EPlatform_State new_state)
 
 	case EPlatform_State::Laser:
 		if (Set_Transformation_State(new_state, Platform_State.Laser) )
-			return;	
+			return;
 		break;
 	}
 
@@ -523,48 +534,6 @@ void AsPlatform::Draw_Meltdown_State(HDC hdc, RECT &paint_area)
 	Platform_State.Meltdown = EPlatform_Substate_Meltdown::Unknown;
 
 	Set_State(EPlatform_Substate_Regular::Missing);
-}
-//------------------------------------------------------------------------------------------------------------
-bool AsPlatform::Reflect_From_Circle(double next_x_pos, double next_y_pos, double platform_ball_x_offset, ABall *ball) const
-{
-	double dx, dy;
-	double platform_ball_x, platform_ball_y, platform_ball_radius;
-	double distance, two_radiuses;
-	double alpha, beta, gamma;
-	double related_ball_direction;
-
-	platform_ball_radius = (double)AsConfig::Platform_Circle_Diameter / 2.0;
-	platform_ball_x = (double)X_Pos + platform_ball_radius + platform_ball_x_offset;
-	platform_ball_y = (double)AsConfig::Platform_Y_Pos + platform_ball_radius;
-
-	dx = next_x_pos - platform_ball_x;
-	dy = next_y_pos - platform_ball_y;
-
-	distance = sqrt(dy * dy + dx * dx);
-	two_radiuses = platform_ball_radius + ball->Radius;
-
-	if (distance + AsConfig::Moving_Step_Size < two_radiuses)
-	{
-		beta = atan2(-dy, dx);
-
-		related_ball_direction = ball->Get_Direction() - beta;
-
-		if (related_ball_direction > 2.0 * M_PI)
-			related_ball_direction -= 2.0 * M_PI;
-		if (related_ball_direction < 0.0)
-			related_ball_direction += 2.0 * M_PI;
-
-		if (related_ball_direction > M_PI_2 && related_ball_direction < M_PI + M_PI_2)
-		{
-			alpha = beta + M_PI - ball->Get_Direction();
-			gamma = beta + alpha;
-
-			ball->Set_Direction(gamma);
-			return true;
-		}
-	}
-
-	return false;
 }
 //------------------------------------------------------------------------------------------------------------
 void AsPlatform::Act_Rolling_State()

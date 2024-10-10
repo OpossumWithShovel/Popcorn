@@ -6,7 +6,7 @@ AColor AExplosive_Ball::Fading_Blue_Colors[Fading_Steps_Count];
 AColor AExplosive_Ball::Fading_Outline_Colors[Fading_Steps_Count];
 //------------------------------------------------------------------------------------------------------------
 AExplosive_Ball::AExplosive_Ball()
-	: Explosive_Ball_State(EExplosive_Ball_State::Disable), Is_Red(false), X_Pos(0.0), Y_Pos(0.0),
+	: Explosive_Ball_State(EExplosive_Ball_State::Idle), Is_Red(false), X_Pos(0.0), Y_Pos(0.0),
 	Start_Explode_Tick(0), Start_Fading_Tick(0), End_Explode_Tick(0),
 	Size(0), Max_Size(0), Curr_Rect{}, Curr_Ball_Color(0), Curr_Outline_Color(0)
 {
@@ -16,7 +16,7 @@ void AExplosive_Ball::Act()
 {
 	switch (Explosive_Ball_State)
 	{
-	case EExplosive_Ball_State::Disable:
+	case EExplosive_Ball_State::Idle:
 		return;
 
 	case EExplosive_Ball_State::Waiting:
@@ -35,9 +35,9 @@ void AExplosive_Ball::Act()
 
 	case EExplosive_Ball_State::Fading:
 		if (AsConfig::Current_Timer_Tick >= End_Explode_Tick)
-			Explosive_Ball_State = EExplosive_Ball_State::Disable;
-
-		Act_Fading_State();
+			Explosive_Ball_State = EExplosive_Ball_State::Idle;
+		else
+			Act_Fading_State();
 		break;
 
 	default:
@@ -52,7 +52,7 @@ void AExplosive_Ball::Clear(HDC hdc, RECT &paint_area)
 //------------------------------------------------------------------------------------------------------------
 void AExplosive_Ball::Draw(HDC hdc, RECT &paint_area)
 {
-	if (Explosive_Ball_State == EExplosive_Ball_State::Disable)
+	if (Explosive_Ball_State == EExplosive_Ball_State::Idle)
 		return;
 
 	if (Curr_Ball_Color != 0 && Curr_Outline_Color != 0)
@@ -66,7 +66,10 @@ void AExplosive_Ball::Draw(HDC hdc, RECT &paint_area)
 //------------------------------------------------------------------------------------------------------------
 bool AExplosive_Ball::Is_Finished()
 {
-	return false;  //!!!
+	if (Explosive_Ball_State == EExplosive_Ball_State::Idle)
+		return true;
+	else
+		return false;
 }
 //------------------------------------------------------------------------------------------------------------
 void AExplosive_Ball::Explode(double x_pos, double y_pos, double max_size, int explode_delay_ticks, bool is_red)

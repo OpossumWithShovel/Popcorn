@@ -21,6 +21,7 @@ public:
 	static const double Ball_Normal_Speed;
 	static const double Ball_Acceleration;
 	static const double Min_Ball_Angle;
+	static const double Ball_Radius;
 
 	static const int Global_Scale = 3;
 	static const int Platform_Y_Pos = 185;
@@ -75,7 +76,33 @@ public:
 	static void Invalidate_Rect(RECT &rect);
 	static unsigned char Get_Fading_Channel(unsigned char channel, unsigned char bg_channel, int step, int steps_count);
 	static void Get_Fading_Color(const AColor &origin_color, int step, AColor &modified_color, int steps_count);
+	static bool Reflect_From_Circle(double next_x_pos, double next_y_pos, double circle_radius, double circle_x, double circle_y, ABall_Object *ball);
 
 	static void Throw();
+};
+//------------------------------------------------------------------------------------------------------------
+class AHit_Checker
+{
+public:
+	virtual bool Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *ball) = 0;
+	virtual bool Check_Hit(double next_x_pos, double next_y_pos);
+	virtual bool Check_Hit(RECT &rect);
+
+	virtual bool Hit_Circle_On_Line(double distance_to_line, double ball_center_pos, double line_start_pos, double line_end_pos, double radius, double &x);
+};
+//------------------------------------------------------------------------------------------------------------
+class AHit_Checker_List
+{
+public:
+	AHit_Checker_List();
+
+	void Add_Hit_Checker(AHit_Checker *hit_checker);
+	bool Check_Hit(double x_pos, double y_pos);
+	bool Check_Hit(double x_pos, double y_pos, ABall_Object *ball);
+	bool Check_Hit(RECT &rect);
+
+private:
+	int Hit_Checkers_Count;
+	AHit_Checker *Hit_Checkers[4];
 };
 //------------------------------------------------------------------------------------------------------------

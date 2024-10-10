@@ -14,7 +14,7 @@ public:
 	~AsLevel();
 	AsLevel();
 
-	virtual bool Check_Hit(double next_x_pos, double next_y_pos, ABall *ball);
+	virtual bool Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *ball);
 	virtual bool Check_Hit(double next_x_pos, double next_y_pos);
 
 	virtual void Begin_Movement();
@@ -33,20 +33,21 @@ public:
 	void Stop();
 
 	static bool Has_Brick_At(int level_x, int level_y);
+	static bool Has_Brick_At(RECT &rect);
 
 	static char Test_Level[AsConfig::Level_Height][AsConfig::Level_Width];
 	static char Level_01[AsConfig::Level_Height][AsConfig::Level_Width];
 
 private:
-	bool On_Hit(int brick_y, int brick_x, ABall *ball, bool vertical_hit);
+	bool On_Hit(int brick_y, int brick_x, ABall_Object *ball, bool vertical_hit);
 	void On_Hit(int level_y, int level_x);
-	bool Create_Active_Brick(int brick_y, int brick_x, EBrick_Type brick_type, ABall *ball, bool vertical_hit);
-	void Add_Active_Brick_Teleport(int source_x, int source_y, ABall *ball, bool vertical_hit);
+	bool Create_Active_Brick(int brick_y, int brick_x, EBrick_Type brick_type, ABall_Object *ball, bool vertical_hit);
+	void Add_Active_Brick_Teleport(int source_x, int source_y, ABall_Object *ball, bool vertical_hit);
 	void Add_New_Active_Brick(AActive_Brick *active_brick);
 	bool Add_Falling_Letter(int brick_y, int brick_x, EBrick_Type brick_type);
 	AActive_Brick_Teleport *Select_Destination_Teleport(int source_y, int source_x);
-	bool Check_Vertical_Hit(double next_x_pos, double next_y_pos, int level_x, int level_y, double &reflection_pos, ABall *ball);
-	bool Check_Horizontal_Hit(double next_x_pos, double next_y_pos, int level_x, int level_y, double &reflection_pos, ABall *ball);
+	bool Check_Vertical_Hit(double next_x_pos, double next_y_pos, int level_x, int level_y, double &reflection_pos, ABall_Object *ball);
+	bool Check_Horizontal_Hit(double next_x_pos, double next_y_pos, int level_x, int level_y, double &reflection_pos, ABall_Object *ball);
 	void Draw_Brick(HDC hdc, RECT &brick_rect,int level_x, int level_y);
 	void Draw_Parashute_Brick_In_Level(HDC hdc, RECT &brick_rect);
 	void Draw_Parashute_Segment(HDC hdc, RECT &brick_rect, int x_offset, int segment_width);

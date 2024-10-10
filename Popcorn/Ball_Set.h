@@ -6,15 +6,7 @@
 class AsBall_Set: public AGame_Objects_Set
 {
 public:
-	//virtual void Begin_Movement();
-	//virtual void Finish_Movement();
-	//virtual void Advance(double max_speed);
-	//virtual double Get_Speed();
-
 	virtual void Act();
-	//virtual void Clear(HDC hdc, RECT &paint_area);
-	//virtual void Draw(HDC hdc, RECT &paint_area);
-	//virtual bool Is_Finished();
 
 	void Set_On_Platform(double platform_x_pos);
 	void Release_From_Platform(double platform_x_pos);

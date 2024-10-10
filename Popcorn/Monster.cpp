@@ -17,6 +17,57 @@ AMonster::AMonster()
 {
 }
 //------------------------------------------------------------------------------------------------------------
+bool AMonster::Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *ball)
+{
+	double center_x_pos, center_y_pos;
+	double circle_radius;
+
+	if (! (Monster_State == EMonster_State::Alive || Monster_State == EMonster_State::Emitting) )
+		return false;
+
+	circle_radius = (double)Monster_Size / 2.0;
+	center_x_pos = X_Pos + circle_radius;
+	center_y_pos = Y_Pos + circle_radius;
+
+	if(! AsTools::Reflect_From_Circle(next_x_pos, next_y_pos,  circle_radius, center_x_pos, center_y_pos, ball) )
+		return false;
+
+	Destroy();
+
+	return true;
+}
+//------------------------------------------------------------------------------------------------------------
+bool AMonster::Check_Hit(double next_x_pos, double next_y_pos)
+{
+	if (! (Monster_State == EMonster_State::Alive || Monster_State == EMonster_State::Emitting) )
+		return false;
+
+	if (next_y_pos >= Y_Pos && next_y_pos <= Y_Pos + Monster_Size &&
+		next_x_pos >= X_Pos && next_x_pos <= X_Pos + Monster_Size)
+	{
+		Destroy();
+		return true;
+	}
+	else
+		return false;
+}
+//------------------------------------------------------------------------------------------------------------
+bool AMonster::Check_Hit(RECT &rect)
+{
+	RECT intersection_rect;
+
+	if (! (Monster_State == EMonster_State::Alive || Monster_State == EMonster_State::Emitting) )
+		return false;
+
+	if (IntersectRect(&intersection_rect, &rect, &Monster_Rect) )
+	{
+		Destroy();
+		return true;
+	}
+	else
+		return false;
+}
+//------------------------------------------------------------------------------------------------------------
 void AMonster::Begin_Movement()
 {
 	if (Monster_State == EMonster_State::Missing)
@@ -35,33 +86,69 @@ void AMonster::Finish_Movement()
 //------------------------------------------------------------------------------------------------------------
 void AMonster::Advance(double max_speed)
 {
-	if (Monster_State == EMonster_State::Missing)
-		return;
-
+	int i;
+	bool got_new_direction = false;
+	double origin_direction;
 	double next_step;
+	double next_x_pos, next_y_pos;
+	RECT monster_rect;
 
-	next_step = Speed / max_speed * AsConfig::Moving_Step_Size;
-
-	X_Pos += next_step * cos(Direction);
-	Y_Pos -= next_step * sin(Direction);
-
-	if (Monster_State != EMonster_State::Alive)
+	if (! (Monster_State == EMonster_State::Alive || Monster_State == EMonster_State::Emitting) )
 		return;
 
-	if (X_Pos < AsConfig::Level_X_Offset)
-		X_Pos = AsConfig::Level_X_Offset;
-	else if (X_Pos + Monster_Size > AsConfig::Level_Max_X_Offset)
-		X_Pos = AsConfig::Level_Max_X_Offset - Monster_Size;
+	if (Monster_State == EMonster_State::Emitting)
+	{
+		next_step = Speed / max_speed * AsConfig::Moving_Step_Size;
 
-	if (Y_Pos < AsConfig::Level_Y_Offset - 1)
-		Y_Pos = AsConfig::Level_Y_Offset - 1;
-	else if (Y_Pos + Monster_Size > AsConfig::Play_Area_Max_Y_Offset)
-		Y_Pos = AsConfig::Play_Area_Max_Y_Offset - Monster_Size;
+		next_x_pos = X_Pos + next_step * cos(Direction);
+		next_y_pos = Y_Pos - next_step * sin(Direction);
+
+		X_Pos = next_x_pos;
+		Y_Pos = next_y_pos;
+
+		return;
+	}
+
+	origin_direction = Direction;
+
+	for (i = 0; i < 16; i++)
+	{
+		next_step = Speed / max_speed * AsConfig::Moving_Step_Size;
+
+		next_x_pos = X_Pos + next_step * cos(Direction);
+		next_y_pos = Y_Pos - next_step * sin(Direction);
+
+		Get_Monster_Rect(next_x_pos, next_y_pos, monster_rect);
+
+		if ( ! AsLevel::Has_Brick_At(monster_rect) )
+		{
+			got_new_direction = true;
+			break;
+		}
+		else
+			Direction += M_PI / 8.0;
+	}
+
+	if ( ! got_new_direction)
+		Direction = origin_direction - M_PI;
+
+	if (next_x_pos < AsConfig::Level_X_Offset)
+		next_x_pos = AsConfig::Level_X_Offset;
+	else if (next_x_pos + Monster_Size > AsConfig::Level_Max_X_Offset)
+		next_x_pos = AsConfig::Level_Max_X_Offset - Monster_Size;
+
+	if (next_y_pos < AsConfig::Level_Y_Offset - 1)
+		next_y_pos = AsConfig::Level_Y_Offset - 1;
+	else if (next_y_pos + Monster_Size > AsConfig::Floor_Y_Pos)
+		next_y_pos = AsConfig::Floor_Y_Pos - Monster_Size;
+
+	X_Pos = next_x_pos;
+	Y_Pos = next_y_pos;
 }
 //------------------------------------------------------------------------------------------------------------
 double AMonster::Get_Speed()
 {
-	return 0.0;  // Заглушка
+	return Speed;
 }
 //------------------------------------------------------------------------------------------------------------
 void AMonster::Act()
@@ -130,7 +217,10 @@ void AMonster::Draw(HDC hdc, RECT &paint_area)
 //------------------------------------------------------------------------------------------------------------
 bool AMonster::Is_Finished()
 {
-	return false;  // Заглушка
+	if (Monster_State == EMonster_State::Missing)
+		return true;
+	else
+		return false;
 }
 //------------------------------------------------------------------------------------------------------------
 void AMonster::Let_Out(int gate_x_pos, int gate_y_pos, bool left_gate)
@@ -187,6 +277,10 @@ void AMonster::Destroy()
 	int x_offset, y_offset;
 	int size;
 	int delay;
+	
+	if (! (Monster_State == EMonster_State::Alive || Monster_State == EMonster_State::Emitting) )
+		return;
+
 	Monster_State = EMonster_State::Destroing;
 
 	for (i = 0; i < Max_Explosive_Balls_Count; i++)
@@ -264,9 +358,17 @@ void AMonster::Act_Alive()
 void AMonster::Act_Destroing()
 {
 	int i;
+	bool explode_finished = true;
 
 	for (i = 0; i < Max_Explosive_Balls_Count; i++)
+	{
 		Explosive_Balls[i].Act();
+
+		explode_finished &= Explosive_Balls[i].Is_Finished();
+	}
+
+	if (explode_finished)
+		Monster_State = EMonster_State::Missing;
 }
 //------------------------------------------------------------------------------------------------------------
 void AMonster::Draw_Alive(HDC hdc)
@@ -329,12 +431,17 @@ void AMonster::Draw_Destroing(HDC hdc, RECT &paint_area)
 		Explosive_Balls[i].Draw(hdc, paint_area);
 }
 //------------------------------------------------------------------------------------------------------------
+void AMonster::Get_Monster_Rect(double x_pos, double y_pos, RECT &rect)
+{
+	rect.left = (int)(x_pos * AsConfig::D_Global_Scale);
+	rect.top = (int)(y_pos * AsConfig::D_Global_Scale);
+	rect.right = rect.left + Monster_Size * AsConfig::Global_Scale;
+	rect.bottom = rect.top + Monster_Size * AsConfig::Global_Scale;
+}
+//------------------------------------------------------------------------------------------------------------
 void AMonster::Redraw_Monster()
 {
-	Monster_Rect.left = (int)(X_Pos * AsConfig::D_Global_Scale);
-	Monster_Rect.top = (int)(Y_Pos * AsConfig::D_Global_Scale);
-	Monster_Rect.right = Monster_Rect.left + Monster_Size * AsConfig::Global_Scale;
-	Monster_Rect.bottom = Monster_Rect.top + Monster_Size * AsConfig::Global_Scale;
+	Get_Monster_Rect(X_Pos, Y_Pos, Monster_Rect);
 
 	AsTools::Invalidate_Rect(Prev_Monster_Rect);
 	AsTools::Invalidate_Rect(Monster_Rect);

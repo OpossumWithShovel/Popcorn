@@ -5,7 +5,7 @@
 //------------------------------------------------------------------------------------------------------------
 enum class EExplosive_Ball_State: unsigned char
 {
-	Disable,
+	Idle,
 	Waiting,
 	Expanding,
 	Fading
