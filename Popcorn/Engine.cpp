@@ -36,7 +36,7 @@ void AsEngine::Init_Engine(HWND hwnd)
 	ABall::Hit_Checker_List.Add_Hit_Checker(&Monsters_Set);
 
 	ALaser_Beam::Hit_Checker_List.Add_Hit_Checker(&Level);
-	//ALaser_Beam::Hit_Checker_List.Add_Hit_Checker(&Monsters_Set);
+	ALaser_Beam::Hit_Checker_List.Add_Hit_Checker(&Monsters_Set);
 
 	Level.Set_Current_Level(AsLevel::Test_Level);
 

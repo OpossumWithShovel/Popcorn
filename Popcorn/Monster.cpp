@@ -39,7 +39,17 @@ bool AMonster::Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *bal
 //------------------------------------------------------------------------------------------------------------
 bool AMonster::Check_Hit(double next_x_pos, double next_y_pos)
 {
-	return false;  //!!!
+	if (! (Monster_State == EMonster_State::Alive || Monster_State == EMonster_State::Emitting) )
+		return false;
+
+	if (next_y_pos >= Y_Pos && next_y_pos <= Y_Pos + Monster_Size &&
+		next_x_pos >= X_Pos && next_x_pos <= X_Pos + Monster_Size)
+	{
+		Destroy();
+		return true;
+	}
+	else
+		return false;
 }
 //------------------------------------------------------------------------------------------------------------
 void AMonster::Begin_Movement()
