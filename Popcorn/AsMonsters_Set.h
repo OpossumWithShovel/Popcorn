@@ -9,7 +9,7 @@ enum class EMonster_Set_State: unsigned char
 	Select_Next_Gate,
 	Waitinig_For_Open_Gate,
 	Waitinig_For_Close_Gate,
-	Waiting_For_Destroy_All
+	//Waiting_For_Destroy_All
 };
 //------------------------------------------------------------------------------------------------------------
 class AsMonsters_Set: public AHit_Checker, public AGame_Objects_Set
@@ -38,6 +38,6 @@ private:
 
 	AsBorder *Border;  // UNO
 
-	AMonster Monsters[AsConfig::Max_Monsters_Count];
+	AMonster *Monsters[AsConfig::Max_Monsters_Count];
 };
 //------------------------------------------------------------------------------------------------------------

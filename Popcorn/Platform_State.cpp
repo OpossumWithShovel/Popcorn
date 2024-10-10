@@ -22,7 +22,7 @@ void AsPlatform_State::operator = (EPlatform_State new_state)
 //------------------------------------------------------------------------------------------------------------
 void AsPlatform_State::Set_Next_State(EPlatform_State next_state)
 {
-	if (Current_State == next_state || Next_State == next_state)
+	if (Current_State == next_state /*|| Next_State == next_state*/)
 		return;
 
 	switch (Current_State)

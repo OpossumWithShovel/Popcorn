@@ -17,7 +17,7 @@ const AColor AsConfig::Laser_Color(AsConfig::White_Color, AsConfig::Global_Scale
 const AColor AsConfig::Gate_Highlight_Color(AsConfig::White_Color, AsConfig::Global_Scale);
 const AColor AsConfig::Cornea_Color(AsConfig::BG_Color, AsConfig::White_Color, AsConfig::Global_Scale * 2 / 3);
 const AColor AsConfig::Iris_Color(AsConfig::BG_Color, AsConfig::Blue_Color, AsConfig::Global_Scale * 2 / 3);
-const AColor AsConfig::Explode_Outline_Color(AsConfig::White_Color);  //!!!
+const AColor AsConfig::Explode_Outline_Color(AsConfig::White_Color);
 
 HWND AsConfig::Hwnd;
 
