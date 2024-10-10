@@ -1,7 +1,6 @@
 ﻿#include "Ball.h"
 
 // ABall
-const double ABall::Radius = 2.0 - 0.5 / AsConfig::D_Global_Scale;
 AHit_Checker_List ABall::Hit_Checker_List;
 //------------------------------------------------------------------------------------------------------------
 ABall::ABall()
@@ -127,38 +126,42 @@ bool ABall::Is_Finished()
 	return false;  // Заглушка. Этот метод не используется
 }
 //------------------------------------------------------------------------------------------------------------
-void ABall::Set_Speed(double new_speed)
+double ABall::Get_Direction() const
 {
-	if (new_speed > AsConfig::Max_Ball_Speed)
-		new_speed = AsConfig::Max_Ball_Speed;
-
-	Ball_Speed = new_speed;
+	return Ball_Direction;
 }
 //------------------------------------------------------------------------------------------------------------
-void ABall::Set_For_Test()
+void ABall::Set_Direction(double new_direction)
 {
-	Testing_Is_Active = true;
-	Rest_Test_Distance = 30.0;
+	double full_angle = 2.0 * M_PI;
 
-	Set_State(EBall_State::Normal, 90 + Test_Iteration, 90);
-	Ball_Direction = M_PI - M_PI_4;
+	// 1. Переводим угол в диапазон [0 .. 2.0 * M_PI]
+	while (new_direction > full_angle)
+		new_direction -= full_angle;
 
-	++Test_Iteration;
-}
-//------------------------------------------------------------------------------------------------------------
-bool ABall::Is_Test_Finished()
-{
-	if (Testing_Is_Active)
-	{
-		if (Rest_Test_Distance <= 0.0)
-		{
-			Testing_Is_Active = false;
-			Set_State(EBall_State::Lost);
-			return true;
-		}
-	}
+	while (new_direction < 0.0)
+		new_direction += full_angle;
 
-	return false;
+	// 2. Не позволим приближаться к горизонтальной оси ближе, чем на угол AsConfig::Min_Ball_Angle
+	// 2.1. Слева
+	// 2.1.1. Сверху
+	if (new_direction < AsConfig::Min_Ball_Angle)
+		new_direction = AsConfig::Min_Ball_Angle;
+
+	// 2.1.1. Снизу
+	if (new_direction > full_angle - AsConfig::Min_Ball_Angle)
+		new_direction = full_angle - AsConfig::Min_Ball_Angle;
+
+	// 2.2. Справа
+	// 2.2.1. Сверху
+	if (new_direction > M_PI - AsConfig::Min_Ball_Angle && new_direction < M_PI)
+		new_direction = M_PI - AsConfig::Min_Ball_Angle;
+
+	// 2.2.1. Снизу
+	if (new_direction >= M_PI && new_direction < M_PI + AsConfig::Min_Ball_Angle)
+		new_direction = M_PI + AsConfig::Min_Ball_Angle;
+
+	Ball_Direction = new_direction;
 }
 //------------------------------------------------------------------------------------------------------------
 EBall_State ABall::Get_State() const
@@ -261,44 +264,6 @@ void ABall::Set_State(EBall_State new_state, double x_pos, double y_pos)
 	Ball_State = new_state;
 }
 //------------------------------------------------------------------------------------------------------------
-double ABall::Get_Direction() const
-{
-	return Ball_Direction;
-}
-//------------------------------------------------------------------------------------------------------------
-void ABall::Set_Direction(double new_direction)
-{
-	double full_angle = 2.0 * M_PI;
-
-	// 1. Переводим угол в диапазон [0 .. 2.0 * M_PI]
-	while (new_direction > full_angle)
-		new_direction -= full_angle;
-
-	while (new_direction < 0.0)
-		new_direction += full_angle;
-
-	// 2. Не позволим приближаться к горизонтальной оси ближе, чем на угол AsConfig::Min_Ball_Angle
-	// 2.1. Слева
-	// 2.1.1. Сверху
-	if (new_direction < AsConfig::Min_Ball_Angle)
-		new_direction = AsConfig::Min_Ball_Angle;
-
-	// 2.1.1. Снизу
-	if (new_direction > full_angle - AsConfig::Min_Ball_Angle)
-		new_direction = full_angle - AsConfig::Min_Ball_Angle;
-
-	// 2.2. Справа
-	// 2.2.1. Сверху
-	if (new_direction > M_PI - AsConfig::Min_Ball_Angle && new_direction < M_PI)
-		new_direction = M_PI - AsConfig::Min_Ball_Angle;
-
-	// 2.2.1. Снизу
-	if (new_direction >= M_PI && new_direction < M_PI + AsConfig::Min_Ball_Angle)
-		new_direction = M_PI + AsConfig::Min_Ball_Angle;
-
-	Ball_Direction = new_direction;
-}
-//------------------------------------------------------------------------------------------------------------
 void ABall::Reflect(bool from_horizontal)
 {
 	if (from_horizontal)
@@ -323,12 +288,6 @@ bool ABall::Is_Move_Left() const
 		return false;
 }
 //------------------------------------------------------------------------------------------------------------
-void ABall::Get_Center(double &x_pos, double &y_pos) const
-{
-	x_pos = Center_X_Pos;
-	y_pos = Center_Y_Pos;
-}
-//------------------------------------------------------------------------------------------------------------
 void ABall::Set_On_Parashute(int brick_y, int brick_x)
 {
 	int cell_x, cell_y;
@@ -346,7 +305,7 @@ void ABall::Set_On_Parashute(int brick_y, int brick_x)
 	Redraw_Parashute();
 
 	Center_X_Pos = (double)cell_x + (double)Parashute_Size / 2.0;
-	Center_Y_Pos = (double)(cell_y + Parashute_Size) - Radius;
+	Center_Y_Pos = (double)(cell_y + Parashute_Size) - AsConfig::Ball_Radius;
 
 	Ball_Direction = M_PI + M_PI_2;
 	Ball_Speed = 1.0;
@@ -354,9 +313,10 @@ void ABall::Set_On_Parashute(int brick_y, int brick_x)
 	Ball_State = EBall_State::On_Parashute;
 }
 //------------------------------------------------------------------------------------------------------------
-void ABall::Forced_Advance(double offset)
+void ABall::Get_Center(double &x_pos, double &y_pos) const
 {
-	Center_X_Pos += offset;
+	x_pos = Center_X_Pos;
+	y_pos = Center_Y_Pos;
 }
 //------------------------------------------------------------------------------------------------------------
 void ABall::Draw_Teleporting(HDC hdc, int step) const
@@ -371,12 +331,51 @@ void ABall::Draw_Teleporting(HDC hdc, int step) const
 	Ellipse(hdc, Ball_Rect.left, top, Ball_Rect.right - 1, bottom_y);
 }
 //------------------------------------------------------------------------------------------------------------
+void ABall::Set_Speed(double new_speed)
+{
+	if (new_speed > AsConfig::Max_Ball_Speed)
+		new_speed = AsConfig::Max_Ball_Speed;
+
+	Ball_Speed = new_speed;
+}
+//------------------------------------------------------------------------------------------------------------
+void ABall::Set_For_Test()
+{
+	Testing_Is_Active = true;
+	Rest_Test_Distance = 30.0;
+
+	Set_State(EBall_State::Normal, 90 + Test_Iteration, 90);
+	Ball_Direction = M_PI - M_PI_4;
+
+	++Test_Iteration;
+}
+//------------------------------------------------------------------------------------------------------------
+bool ABall::Is_Test_Finished()
+{
+	if (Testing_Is_Active)
+	{
+		if (Rest_Test_Distance <= 0.0)
+		{
+			Testing_Is_Active = false;
+			Set_State(EBall_State::Lost);
+			return true;
+		}
+	}
+
+	return false;
+}
+//------------------------------------------------------------------------------------------------------------
+void ABall::Forced_Advance(double offset)
+{
+	Center_X_Pos += offset;
+}
+//------------------------------------------------------------------------------------------------------------
 void ABall::Redraw_Ball()
 {
-	Ball_Rect.left = (int)( (Center_X_Pos - Radius) * AsConfig::D_Global_Scale);
-	Ball_Rect.top = (int)( (Center_Y_Pos - Radius) * AsConfig::D_Global_Scale);
-	Ball_Rect.right = (int)( (Center_X_Pos + Radius) * AsConfig::D_Global_Scale);
-	Ball_Rect.bottom = (int)( (Center_Y_Pos + Radius) * AsConfig::D_Global_Scale);
+	Ball_Rect.left = (int)( (Center_X_Pos - AsConfig::Ball_Radius) * AsConfig::D_Global_Scale);
+	Ball_Rect.top = (int)( (Center_Y_Pos - AsConfig::Ball_Radius) * AsConfig::D_Global_Scale);
+	Ball_Rect.right = (int)( (Center_X_Pos + AsConfig::Ball_Radius) * AsConfig::D_Global_Scale);
+	Ball_Rect.bottom = (int)( (Center_Y_Pos + AsConfig::Ball_Radius) * AsConfig::D_Global_Scale);
 
 	AsTools::Invalidate_Rect(Prev_Ball_Rect);
 	AsTools::Invalidate_Rect(Ball_Rect);

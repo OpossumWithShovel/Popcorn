@@ -31,29 +31,29 @@ AsBorder::AsBorder()
 	Gates[7] = new AGate(AsConfig::Level_Max_X_Offset, 178);
 }
 //------------------------------------------------------------------------------------------------------------
-bool AsBorder::Check_Hit(double next_x_pos, double next_y_pos, ABall *ball)
+bool AsBorder::Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *ball)
 {// Проверяем столкновения с рамками уровня или полом
 	bool got_hit = false;
 
 	// 1. С левой или правой рамки
-	if (next_x_pos - ball->Radius < Left_Border_X_Offset || next_x_pos + ball->Radius > Right_Border_X_Offset)
+	if (next_x_pos - AsConfig::Ball_Radius < Left_Border_X_Offset || next_x_pos + AsConfig::Ball_Radius > Right_Border_X_Offset)
 	{
 		got_hit = true;
 		ball->Reflect(false);
 	}
 
 	// 2. С верхней рамкой
-	if (next_y_pos - ball->Radius < Top_Border_X_Offset)
+	if (next_y_pos - AsConfig::Ball_Radius < Top_Border_X_Offset)
 	{
 		got_hit = true;
 		ball->Reflect(true);
 	}
-	else if (next_y_pos + ball->Radius >= AsConfig::Floor_Y_Pos && AsConfig::Level_Has_Floor)
+	else if (next_y_pos + AsConfig::Ball_Radius >= AsConfig::Floor_Y_Pos && AsConfig::Level_Has_Floor)
 	{
 		got_hit = true;
 		ball->Reflect(true);
 	}
-	else if (next_y_pos - ball->Radius > AsConfig::Play_Area_Max_Y_Offset)
+	else if (next_y_pos - AsConfig::Ball_Radius > AsConfig::Play_Area_Max_Y_Offset)
 	{
 		ball->Set_State(EBall_State::Lost);
 	}
@@ -149,6 +149,7 @@ int AsBorder::Long_Open_Gate()
 	bool got_gate = false;
 	int gate_index;
 	AGate *curr_gate;
+	RECT monster_rect;
 
 	gate_index = AsTools::Rand(AsConfig::Gates_Count - 1);
 
@@ -164,8 +165,11 @@ int AsBorder::Long_Open_Gate()
 				break;
 			}
 
+			AsLevel::Has_Brick_At(monster_rect);
+
 			if ( ! AsLevel::Has_Brick_At(curr_gate->Level_X, curr_gate->Level_Y) &&
-				! AsLevel::Has_Brick_At(curr_gate->Level_X + 1, curr_gate->Level_Y + 1) )
+				! AsLevel::Has_Brick_At(curr_gate->Level_X, curr_gate->Level_Y + 1) &&
+				! AsLevel::Has_Brick_At(curr_gate->Level_X, curr_gate->Level_Y - 1))
 			{
 				got_gate = true;
 				break;

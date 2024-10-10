@@ -3,21 +3,7 @@
 #include "Config.h"
 
 //------------------------------------------------------------------------------------------------------------
-enum class EBall_State: unsigned char
-{
-	Disabled,
-
-	Normal,
-	Lost,
-	On_Platform,
-	On_Glue_Platform,
-	On_Parashute,
-	Off_Parashute,
-	Teleporting_Stage_1,
-	Teleporting_Stage_2
-};
-//------------------------------------------------------------------------------------------------------------
-class ABall: public AGame_Object
+class ABall: public AGame_Object, public ABall_Object
 {
 public:
 	ABall();
@@ -32,24 +18,23 @@ public:
 	virtual void Draw(HDC hdc, RECT &paint_area);
 	virtual bool Is_Finished();
 
+	virtual double Get_Direction() const;
+	virtual void Set_Direction(double new_direction);
+	virtual EBall_State Get_State() const;
+	virtual void Set_State(EBall_State new_state, double x_pos = 0, double y_pos = 0);
+	virtual void Reflect(bool from_horizontal);
+	virtual bool Is_Move_Up() const;
+	virtual bool Is_Move_Left() const;
+	virtual void Set_On_Parashute(int brick_y, int brick_x);
+	virtual void Get_Center(double &x_pos, double &y_pos) const;
+	virtual void Draw_Teleporting(HDC hdc, int step) const;
+
 	void Set_Speed(double new_speed);
 	void Set_For_Test();
 	bool Is_Test_Finished();
-	EBall_State Get_State() const;
-	void Set_State(EBall_State new_state, double x_pos = 0, double y_pos = 0);
-	double Get_Direction() const;
-	void Set_Direction(double new_direction);
-	void Reflect(bool from_horizontal);
-	bool Is_Move_Up() const;
-	bool Is_Move_Left() const;
-	void Get_Center(double &x_pos, double &y_pos) const;
-	void Set_On_Parashute(int brick_y, int brick_x);
 	void Forced_Advance(double offset);
-	void Draw_Teleporting(HDC hdc, int step) const;
 
 	int Release_Timer_Tick;
-
-	static const double Radius;
 
 	static AHit_Checker_List Hit_Checker_List;
 

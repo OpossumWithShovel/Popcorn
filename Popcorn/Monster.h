@@ -2,6 +2,7 @@
 
 #include "Gate.h"
 #include "Explosive_Ball.h"
+#include "Level.h"
 
 //------------------------------------------------------------------------------------------------------------
 enum class EEye_State: unsigned char
@@ -20,10 +21,13 @@ enum class EMonster_State: unsigned char
 	Destroing
 };
 //------------------------------------------------------------------------------------------------------------
-class AMonster: public AGame_Object
+class AMonster: public AHit_Checker, public AGame_Object
 {
 public:
 	AMonster();
+	
+	virtual bool Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *ball);
+	virtual bool Check_Hit(double next_x_pos, double next_y_pos);
 
 	virtual void Begin_Movement();
 	virtual void Finish_Movement();
@@ -44,6 +48,7 @@ private:
 	void Act_Destroing();
 	void Draw_Alive(HDC hdc);
 	void Draw_Destroing(HDC hdc, RECT &paint_area);
+	void Get_Monster_Rect(double x_pos, double y_pos, RECT &rect);
 	void Redraw_Monster();
 
 	EMonster_State Monster_State;

@@ -8,6 +8,30 @@ AsMonsters_Set::AsMonsters_Set()
 {
 }
 //------------------------------------------------------------------------------------------------------------
+bool AsMonsters_Set::Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *ball)
+{
+	int i;
+
+	for (i = 0; i < AsConfig::Max_Monsters_Count; i++)
+		if (Monsters[i].Is_Active() )
+			if (Monsters[i].Check_Hit(next_x_pos, next_y_pos, ball) )
+				return true;
+
+	return false;
+}
+//------------------------------------------------------------------------------------------------------------
+bool AsMonsters_Set::Check_Hit(double next_x_pos, double next_y_pos)
+{
+	int i;
+
+	for (i = 0; i < AsConfig::Max_Monsters_Count; i++)
+		if (Monsters[i].Is_Active() )
+			if (Monsters[i].Check_Hit(next_x_pos, next_y_pos) )
+				return true;
+
+	return false;
+}
+//------------------------------------------------------------------------------------------------------------
 void AsMonsters_Set::Act()
 {
 	int i;
