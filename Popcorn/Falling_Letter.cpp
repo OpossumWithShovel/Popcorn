@@ -87,6 +87,11 @@ void AFalling_Letter::Destroy()
 	AsTools::Invalidate_Rect(Letter_Cell);
 }
 //------------------------------------------------------------------------------------------------------------
+void AFalling_Letter::Show_Full_Size()
+{
+	Rotation_Step = 8;
+}
+//------------------------------------------------------------------------------------------------------------
 void AFalling_Letter::Init()
 {
 	int i;

@@ -240,7 +240,6 @@ void AMonster::Let_Out(int gate_x_pos, int gate_y_pos, bool left_gate)
 	Emiting_Timer_Tick = AsConfig::Current_Timer_Tick + (int)( (double)AGate::Width / (double)Speed);
 
 	On_Activation();
-
 	Redraw_Monster();
 }
 //------------------------------------------------------------------------------------------------------------
@@ -398,9 +397,6 @@ void AMonster_Eye::Act_Alive()
 	}
 
 	AsTools::Invalidate_Rect(Monster_Rect);
-
-	if (Monster_State == EMonster_State::Emitting)
-		return;
 }
 //------------------------------------------------------------------------------------------------------------
 void AMonster_Eye::Draw_Alive(HDC hdc)
@@ -505,9 +501,6 @@ void AMonster_Comet::Act_Alive()
 {
 	int tick_offset;
 	double ratio;
-
-	if (Monster_State == EMonster_State::Missing)
-		return;
 
 	tick_offset = (AsConfig::Current_Timer_Tick - Alive_Timer_Tick) % Ticks_Per_Rotation;
 

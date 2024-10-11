@@ -4,6 +4,8 @@
 //------------------------------------------------------------------------------------------------------------
 bool AsConfig::Level_Has_Floor = true;
 int AsConfig::Current_Timer_Tick = 0;
+int AsConfig::Score = 1234;
+int AsConfig::Extra_Lives_Count = 5;
 
 const AColor AsConfig::BG_Color(0, 0, 0);
 const AColor AsConfig::Red_Color(255, 85, 255);
@@ -19,6 +21,7 @@ const AColor AsConfig::Cornea_Color(BG_Color, White_Color, Global_Scale * 2 / 3)
 const AColor AsConfig::Iris_Color(BG_Color, Blue_Color, Global_Scale * 2 / 3);
 const AColor AsConfig::Explode_Outline_Color(White_Color);
 const AColor AsConfig::Monster_Comet_Tail(Red_Color, Global_Scale);
+const AColor AsConfig::Floor_Indicator_Color(Red_Color, BG_Color, Global_Scale);
 
 HWND AsConfig::Hwnd;
 

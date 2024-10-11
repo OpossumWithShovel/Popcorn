@@ -1,9 +1,9 @@
-#include "Engine.h"
+﻿#include "Engine.h"
 
 // AsEngine
 //------------------------------------------------------------------------------------------------------------
 AsEngine::AsEngine()
-	: Game_State(EGame_State::Lost_Ball), Life_Count(5), Rest_Distance(0.0), Modules{}
+	: Timer_ID(WM_USER + 1), Game_State(EGame_State::Lost_Ball), Rest_Distance(0.0), Modules{}
 {
 }
 //------------------------------------------------------------------------------------------------------------
@@ -29,6 +29,7 @@ void AsEngine::Init_Engine(HWND hwnd)
 	Level.Init();
 	Platform.Init(&Ball_Set, &Laser_Beams_Set);
 	Monsters_Set.Init(&Border);
+	Info_Panel.Init();
 
 	ABall::Hit_Checker_List.Add_Hit_Checker(&Level);
 	ABall::Hit_Checker_List.Add_Hit_Checker(&Border);
@@ -57,6 +58,7 @@ void AsEngine::Init_Engine(HWND hwnd)
 	Add_Next_Module(index, &Ball_Set);
 	Add_Next_Module(index, &Laser_Beams_Set);
 	Add_Next_Module(index, &Monsters_Set);
+	Add_Next_Module(index, &Info_Panel);
 }
 //-------------------------------------------------------------------------------------------------------------
 void AsEngine::Draw_Frame(HDC hdc, RECT &paint_area)
@@ -126,9 +128,9 @@ int AsEngine::On_Timer()
 	case EGame_State::Restart_Level:
 		if (Platform.Has_State(EPlatform_Substate_Regular::Ready) )
 		{
-			Ball_Set.Set_On_Platform(Platform.Get_Middle_Pos());
+			Ball_Set.Set_On_Platform(Platform.Get_Middle_Pos() );
 			Game_State = EGame_State::Play_Level;
-			Monsters_Set.Activate(7);
+			Monsters_Set.Activate(AsConfig::Max_Monsters_Count);
 		}
 		break;
 
@@ -254,8 +256,8 @@ void AsEngine::On_Falling_Letter(AFalling_Letter *falling_letter)
 		//case ELetter_Type::M: // monsters
 
 	case ELetter_Type::Plus: // life
-		if (Life_Count < AsConfig::Max_Life_Count)
-			++Life_Count;
+		if (AsConfig::Extra_Lives_Count < AsConfig::Max_Life_Count)
+			++AsConfig::Extra_Lives_Count;
 
 		Platform.Set_State(EPlatform_Substate_Regular::Normal);
 		break;

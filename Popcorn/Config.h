@@ -8,10 +8,12 @@ class AsConfig
 public:
 	static bool Level_Has_Floor;
 	static int Current_Timer_Tick;
+	static int Score;
+	static int Extra_Lives_Count;
 	static const AColor BG_Color, Red_Color, Blue_Color, White_Color, Symbol_Color;
 	static const AColor Teleport_Color, Red_Highlight, Blue_Highlight, Laser_Color;
 	static const AColor Gate_Highlight_Color, Monster_Comet_Tail;
-	static const AColor Cornea_Color, Iris_Color, Explode_Outline_Color;
+	static const AColor Cornea_Color, Iris_Color, Explode_Outline_Color, Floor_Indicator_Color;
 	static HWND Hwnd;
 
 	static const double D_Global_Scale;
@@ -46,7 +48,7 @@ public:
 	static const int Max_Movers_Count = 10;
 	static const int Max_Modules_Count = 10;
 	static const int Max_Laser_Beams_Count = 10;
-	static const int Max_Monsters_Count = 10;
+	static const int Max_Monsters_Count = 3;
 	static const int Max_Life_Count = 12;
 	static const int Floor_Y_Pos = Play_Area_Max_Y_Offset - 1;
 	static const int Ball_On_Glue_Timeout = 60 * FPS;  //!!! 3 sec

@@ -41,6 +41,7 @@ public:
 
 	void Get_Cell(RECT &rect) const;
 	void Destroy();
+	void Show_Full_Size();
 
 	static void Init();
 	static ELetter_Type Get_Random_Letter_Type();

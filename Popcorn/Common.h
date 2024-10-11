@@ -5,6 +5,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#include <string>
+
 //------------------------------------------------------------------------------------------------------------
 enum class EBall_State: unsigned char
 {
@@ -63,6 +65,7 @@ public:
 class AColor
 {
 public:
+	~AColor();
 	AColor();
 	AColor(unsigned char r, unsigned char g, unsigned char b);
 	AColor(const AColor &color, int pen_tickness);
@@ -99,5 +102,19 @@ public:
 
 protected:
 	virtual bool Get_Next_Obj(int &index, AGame_Object **game_obj) = 0;
+};
+//-----------------------------------------------------------------------------------------------------------
+class AString
+{
+public:
+	AString();
+	AString(const wchar_t *str);
+
+	void Append(int value);
+	const wchar_t *Get_Content();
+	int Get_Lenght();
+
+private:
+	std::wstring Content;
 };
 //------------------------------------------------------------------------------------------------------------

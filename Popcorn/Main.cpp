@@ -197,7 +197,7 @@ LRESULT CALLBACK AsMain_Window::Window_Proc(HWND hwnd, UINT message, WPARAM wpar
 
 
 	case WM_TIMER:
-		if (wparam == AsEngine::Timer_ID)
+		if (wparam == Self->Engine.Timer_ID)
 			return Self->Engine.On_Timer();
 		break;
 
