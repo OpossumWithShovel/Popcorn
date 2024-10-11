@@ -473,3 +473,107 @@ void AMonster_Eye::On_Activation()
 	Total_Animation_Timeout = tick_offset;
 }
 //------------------------------------------------------------------------------------------------------------
+
+
+
+
+// AMonster_Comet
+//------------------------------------------------------------------------------------------------------------
+AMonster_Comet::~AMonster_Comet()
+{
+}
+//------------------------------------------------------------------------------------------------------------
+AMonster_Comet::AMonster_Comet()
+	: Alive_Timer_Tick(0), Ticks_Per_Rotation(0), Current_Angle(0.0)
+{
+}
+//------------------------------------------------------------------------------------------------------------
+void AMonster_Comet::Clear(HDC hdc, RECT &paint_area)
+{
+	RECT intersection_rect;
+
+	if (Monster_State == EMonster_State::Missing)
+		return;
+
+	if ( ! IntersectRect(&intersection_rect, &paint_area, &Prev_Monster_Rect) )
+		return;
+
+	AsTools::Rect(hdc, Prev_Monster_Rect, AsConfig::BG_Color);
+}
+//------------------------------------------------------------------------------------------------------------
+void AMonster_Comet::Act_Alive()
+{
+	int tick_offset;
+	double ratio;
+
+	if (Monster_State == EMonster_State::Missing)
+		return;
+
+	tick_offset = (AsConfig::Current_Timer_Tick - Alive_Timer_Tick) % Ticks_Per_Rotation;
+
+	ratio = (double)tick_offset / (double)Ticks_Per_Rotation;
+
+	Current_Angle = ratio * 2.0 * M_PI;
+}
+//------------------------------------------------------------------------------------------------------------
+void AMonster_Comet::Draw_Alive(HDC hdc)
+{
+	int i;
+	double alpha;
+	const int scale = AsConfig::Global_Scale;
+	const double d_scale = AsConfig::D_Global_Scale;
+	double monster_radius = (double)(Monster_Size * d_scale / 2.0 - 1.0);
+	int ball_size = 4 * scale - scale / 2;
+	XFORM xform{}, old_xform;
+	RECT rect{};
+
+	GetWorldTransform(hdc, &old_xform);
+
+	alpha = Current_Angle;
+
+	for (i = 0; i < 2; i++)
+	{
+		xform.eM11 = (float)cos(alpha);
+		xform.eM12 = (float)sin(alpha);
+		xform.eM21 = (float)-sin(alpha);
+		xform.eM22 = (float)cos(alpha);
+		xform.eDx = (float)(X_Pos * d_scale + monster_radius);
+		xform.eDy = (float)(Y_Pos * d_scale + monster_radius);
+	
+		SetWorldTransform(hdc, &xform);
+		alpha += M_PI;
+
+		rect.left = (int)-monster_radius;
+		rect.top = -ball_size / 2;
+		rect.right = rect.left + ball_size;
+		rect.bottom = rect.top + ball_size;
+
+		AsTools::Ellipse(hdc, rect, AsConfig::White_Color);
+
+		AsConfig::Monster_Comet_Tail.Select_Pen(hdc);
+
+		rect.left = (int)-monster_radius + 2 * scale;
+		rect.top = (int)-monster_radius + 2 * scale;
+		rect.right = (int)monster_radius - 2 * scale;
+		rect.bottom = (int)monster_radius - 2 * scale;
+
+		Arc(hdc, rect.left, rect.top, rect.right - 1, rect.bottom - 1, 0, (int)-monster_radius, (int)-monster_radius, - 4 * scale);
+	
+		rect.left += 1 * scale;
+
+		Arc(hdc, rect.left, rect.top, rect.right - 1, rect.bottom - 1, 0, (int)-monster_radius, (int)-monster_radius, - 4 * scale);
+	}
+
+	SetWorldTransform(hdc, &old_xform);
+}
+//------------------------------------------------------------------------------------------------------------
+void AMonster_Comet::On_Activation()
+{
+	int ticks_delta;
+	Alive_Timer_Tick = AsConfig::Current_Timer_Tick;
+
+	ticks_delta = Max_Ticks_Per_Rotation - Min_Ticks_Per_Rotation;
+
+	Ticks_Per_Rotation = AsTools::Rand(ticks_delta) + Min_Ticks_Per_Rotation;
+}
+//------------------------------------------------------------------------------------------------------------

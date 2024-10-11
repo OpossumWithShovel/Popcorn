@@ -147,7 +147,11 @@ void AsMonsters_Set::Let_Out(int gate_index)
 
 		if (curr_monster == 0)
 		{
-			curr_monster = new AMonster_Eye();
+			if (AsTools::Rand(2) == 0)
+				curr_monster = new AMonster_Eye();
+			else
+				curr_monster = new AMonster_Comet();
+
 			Monsters[i] = curr_monster;
 			break;
 		}
@@ -170,6 +174,8 @@ void AsMonsters_Set::Destroy_All()
 	for (i = 0; i < AsConfig::Max_Monsters_Count; i++)
 		if (Monsters[i] != 0)
 			Monsters[i]->Destroy();
+
+	Monster_Set_State = EMonster_Set_State::Idle;
 }
 //------------------------------------------------------------------------------------------------------------
 bool AsMonsters_Set::Get_Next_Obj(int &index, AGame_Object **game_obj)

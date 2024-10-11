@@ -10,7 +10,7 @@ public:
 	static int Current_Timer_Tick;
 	static const AColor BG_Color, Red_Color, Blue_Color, White_Color, Symbol_Color;
 	static const AColor Teleport_Color, Red_Highlight, Blue_Highlight, Laser_Color;
-	static const AColor Gate_Highlight_Color;
+	static const AColor Gate_Highlight_Color, Monster_Comet_Tail;
 	static const AColor Cornea_Color, Iris_Color, Explode_Outline_Color;
 	static HWND Hwnd;
 

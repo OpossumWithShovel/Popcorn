@@ -97,7 +97,7 @@ void AsPlatform::Advance(double max_speed)
 
 	X_Pos += next_step;
 
-	if (Correct_Platform_Pos())
+	if (Correct_Platform_Pos() )
 	{
 		Speed = 0.0;
 		Platform_State.Moving = EPlatform_Moving_State::Stopping;
@@ -354,6 +354,8 @@ void AsPlatform::Set_State(EPlatform_State new_state)
 			return Platform_State.Set_Next_State(new_state);
 
 		Platform_State.Moving = EPlatform_Moving_State::Stop;
+		Left_Key_Down = false;
+		Right_Key_Down = false;
 		Speed = 0.0;
 		Platform_State.Meltdown = EPlatform_Substate_Meltdown::Init;
 		break;

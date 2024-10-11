@@ -102,5 +102,22 @@ private:
 class AMonster_Comet: public AMonster
 {
 public:
+	~AMonster_Comet();
+	AMonster_Comet();
+
+private:
+	virtual void Clear(HDC hdc, RECT &paint_area);
+
+	virtual void Act_Alive();
+	virtual void Draw_Alive(HDC hdc);
+	virtual void On_Activation();
+
+	int Alive_Timer_Tick;
+	int Ticks_Per_Rotation;
+
+	double Current_Angle;
+
+	static const int Min_Ticks_Per_Rotation = AsConfig::FPS * 2;
+	static const int Max_Ticks_Per_Rotation = AsConfig::FPS / 2;
 };
 //------------------------------------------------------------------------------------------------------------

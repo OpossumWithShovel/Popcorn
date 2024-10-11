@@ -2,22 +2,23 @@
 
 // AsConfig
 //------------------------------------------------------------------------------------------------------------
-bool AsConfig::Level_Has_Floor = false;
+bool AsConfig::Level_Has_Floor = true;
 int AsConfig::Current_Timer_Tick = 0;
 
 const AColor AsConfig::BG_Color(0, 0, 0);
 const AColor AsConfig::Red_Color(255, 85, 255);
 const AColor AsConfig::Blue_Color(85, 255, 255);
 const AColor AsConfig::White_Color(255, 255, 255);
-const AColor AsConfig::Symbol_Color(AsConfig::White_Color, AsConfig::Global_Scale);
-const AColor AsConfig::Teleport_Color(AsConfig::Blue_Color, AsConfig::BG_Color, AsConfig::Global_Scale);
-const AColor AsConfig::Red_Highlight(AsConfig::Red_Color, 3 * AsConfig::Global_Scale);
-const AColor AsConfig::Blue_Highlight(AsConfig::Blue_Color, AsConfig::Global_Scale - 1);
-const AColor AsConfig::Laser_Color(AsConfig::White_Color, AsConfig::Global_Scale);
-const AColor AsConfig::Gate_Highlight_Color(AsConfig::White_Color, AsConfig::Global_Scale);
-const AColor AsConfig::Cornea_Color(AsConfig::BG_Color, AsConfig::White_Color, AsConfig::Global_Scale * 2 / 3);
-const AColor AsConfig::Iris_Color(AsConfig::BG_Color, AsConfig::Blue_Color, AsConfig::Global_Scale * 2 / 3);
-const AColor AsConfig::Explode_Outline_Color(AsConfig::White_Color);
+const AColor AsConfig::Symbol_Color(White_Color, Global_Scale);
+const AColor AsConfig::Teleport_Color(Blue_Color, BG_Color, Global_Scale);
+const AColor AsConfig::Red_Highlight(Red_Color, 3 * Global_Scale);
+const AColor AsConfig::Blue_Highlight(Blue_Color, Global_Scale - 1);
+const AColor AsConfig::Laser_Color(White_Color, Global_Scale);
+const AColor AsConfig::Gate_Highlight_Color(White_Color, Global_Scale);
+const AColor AsConfig::Cornea_Color(BG_Color, White_Color, Global_Scale * 2 / 3);
+const AColor AsConfig::Iris_Color(BG_Color, Blue_Color, Global_Scale * 2 / 3);
+const AColor AsConfig::Explode_Outline_Color(White_Color);
+const AColor AsConfig::Monster_Comet_Tail(Red_Color, Global_Scale);
 
 HWND AsConfig::Hwnd;
 
@@ -28,7 +29,7 @@ const double AsConfig::Max_Ball_Speed = 6.0;
 const double AsConfig::Ball_Normal_Speed = 3.0;
 const double AsConfig::Ball_Acceleration = 1.001;
 const double AsConfig::Min_Ball_Angle = M_PI / 8.0;
-const double AsConfig::Ball_Radius = 2.0 - 0.5 / AsConfig::D_Global_Scale;
+const double AsConfig::Ball_Radius = 2.0 - 0.5 / D_Global_Scale;
 //------------------------------------------------------------------------------------------------------------
 
 

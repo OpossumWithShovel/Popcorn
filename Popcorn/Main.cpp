@@ -40,7 +40,7 @@ HDC AsFrame_DC::Get_DC(HWND hwnd, HDC hdc)
 	frame_dc_width = rect.right - rect.left;
 	frame_dc_height = rect.bottom - rect.top;
 
-	if (Width != frame_dc_width || Height != frame_dc_height)
+	if (Width != frame_dc_width && Height != frame_dc_height)
 	{
 		if (Bitmap != 0)
 			DeleteObject(Bitmap);
