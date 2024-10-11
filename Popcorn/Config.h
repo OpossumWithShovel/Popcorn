@@ -45,7 +45,6 @@ public:
 	static const int Max_Falling_Letters_count = 10;
 	static const int Hits_Per_Letter = 1;  // Шанс выпадения "буквы" из кирпича -> 1.0 / Hits_Per_Letter
 	static const int Max_Balls_Count = 10;
-	static const int Max_Movers_Count = 10;
 	static const int Max_Modules_Count = 10;
 	static const int Max_Laser_Beams_Count = 10;
 	static const int Max_Monsters_Count = 3;

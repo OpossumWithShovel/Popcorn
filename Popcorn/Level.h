@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Falling_Letter.h"
+#include <vector>
 
 //------------------------------------------------------------------------------------------------------------
 struct SPoint
@@ -43,7 +44,6 @@ private:
 	void On_Hit(int level_y, int level_x);
 	bool Create_Active_Brick(int brick_y, int brick_x, EBrick_Type brick_type, ABall_Object *ball, bool vertical_hit);
 	void Add_Active_Brick_Teleport(int source_x, int source_y, ABall_Object *ball, bool vertical_hit);
-	void Add_New_Active_Brick(AActive_Brick *active_brick);
 	bool Add_Falling_Letter(int brick_y, int brick_x, EBrick_Type brick_type);
 	AActive_Brick_Teleport *Select_Destination_Teleport(int source_y, int source_x);
 	bool Check_Vertical_Hit(double next_x_pos, double next_y_pos, int level_x, int level_y, double &reflection_pos, ABall_Object *ball);
@@ -52,10 +52,8 @@ private:
 	void Draw_Parashute_Brick_In_Level(HDC hdc, RECT &brick_rect);
 	void Draw_Parashute_Segment(HDC hdc, RECT &brick_rect, int x_offset, int segment_width);
 	void Redraw_Brick(int brick_y, int brick_x);
-	void Act_Object(AGraphics_Object **object, const int max_objects_count, int &current_obj_count);
-	void Draw_Object(HDC hdc, RECT &paint_area, AGraphics_Object **object, int objects_count);
-	void Clear_Object(HDC hdc, RECT &paint_area, AGraphics_Object **object, int objects_count);
-	void Delete_Object(AGraphics_Object **object, const int max_objects_count, int &current_obj_count);
+	void Act_Object(std::vector<AGraphics_Object *> &graphics_object);
+	void Delete_Object(std::vector<AGraphics_Object *> &graphics_object);
 	void Cansel_All_Activity();
 
 	AColor Parashute_Brick_Color;
@@ -63,8 +61,6 @@ private:
 
 	bool Need_To_Cansel_All;
 
-	int Active_Bricks_Count;
-	int Falling_Letters_Count;
 	int Teleport_Bricks_Count;
 
 	double Current_Brick_Left_X, Current_Brick_Right_X;
@@ -73,8 +69,8 @@ private:
 	RECT Level_Rect;
 	SPoint *Teleport_Bricks_Pos;
 
-	AActive_Brick *Active_Bricks[AsConfig::Max_Active_Bricks_Count];
-	AFalling_Letter *Falling_Letters[AsConfig::Max_Falling_Letters_count];
+	std::vector<AGraphics_Object *> Active_Bricks;
+	std::vector<AGraphics_Object *> Falling_Letters;
 
 	static char Current_Level[AsConfig::Level_Height][AsConfig::Level_Width];
 

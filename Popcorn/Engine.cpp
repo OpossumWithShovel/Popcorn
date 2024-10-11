@@ -3,7 +3,7 @@
 // AsEngine
 //------------------------------------------------------------------------------------------------------------
 AsEngine::AsEngine()
-	: Timer_ID(WM_USER + 1), Game_State(EGame_State::Lost_Ball), Rest_Distance(0.0), Modules{}
+	: Timer_ID(WM_USER + 1), Game_State(EGame_State::Lost_Ball), Rest_Distance(0.0)
 {
 }
 //------------------------------------------------------------------------------------------------------------
@@ -50,30 +50,24 @@ void AsEngine::Init_Engine(HWND hwnd)
 
 	SetTimer(AsConfig::Hwnd, Timer_ID, 1000 / AsConfig::FPS, 0);
 
-	memset(Modules, 0, sizeof(Modules) );
-
-	Add_Next_Module(index, &Level);
-	Add_Next_Module(index, &Border);
-	Add_Next_Module(index, &Platform);
-	Add_Next_Module(index, &Ball_Set);
-	Add_Next_Module(index, &Laser_Beams_Set);
-	Add_Next_Module(index, &Monsters_Set);
-	Add_Next_Module(index, &Info_Panel);
+	Modules.push_back(&Level);
+	Modules.push_back(&Border);
+	Modules.push_back(&Platform);
+	Modules.push_back(&Ball_Set);
+	Modules.push_back(&Laser_Beams_Set);
+	Modules.push_back(&Monsters_Set);
+	Modules.push_back(&Info_Panel);
 }
 //-------------------------------------------------------------------------------------------------------------
 void AsEngine::Draw_Frame(HDC hdc, RECT &paint_area)
 {
-	int i;
-
 	SetGraphicsMode(hdc, GM_ADVANCED);
 
-	for (i = 0; i < AsConfig::Max_Modules_Count; i++)
-		if (Modules[i] != 0)
-			Modules[i]->Clear(hdc, paint_area);
+	for (auto *curr_module : Modules)
+		curr_module->Clear(hdc, paint_area);
 
-	for (i = 0; i < AsConfig::Max_Modules_Count; i++)
-		if (Modules[i] != 0)
-			Modules[i]->Draw(hdc, paint_area);
+	for (auto *curr_module : Modules)
+		curr_module->Draw(hdc, paint_area);
 }
 //------------------------------------------------------------------------------------------------------------
 int AsEngine::On_Key(EKey_Type key_type, bool key_down)
@@ -148,13 +142,11 @@ int AsEngine::On_Timer()
 //------------------------------------------------------------------------------------------------------------
 void AsEngine::Act()
 {
-	int i;
 	int index = 0;
 	AFalling_Letter *falling_letter;
 
-	for (i = 0; i < AsConfig::Max_Modules_Count; i++)
-		if (Modules[i] != 0)
-			Modules[i]->Act();
+	for (auto *curr_module : Modules)
+		curr_module->Act();
 
 	while (Level.Get_Falling_Letter(index, &falling_letter))
 	{
@@ -194,45 +186,37 @@ void AsEngine::Restart_Level()
 //------------------------------------------------------------------------------------------------------------
 void AsEngine::Advance_Movers()
 {
-	int i;
 	double max_speed = 0.0;
 	double curr_speed;
 
-	for (i = 0; i < AsConfig::Max_Movers_Count; i++)
+	for (auto *curr_module : Modules)
 	{
-		if (Modules[i] != 0)
-		{
-			Modules[i]->Begin_Movement();
+		curr_module->Begin_Movement();
+	
+		curr_speed = fabs(curr_module->Get_Speed() );
 
-			curr_speed = fabs(Modules[i]->Get_Speed() );
-
-			if (curr_speed > max_speed)
-				max_speed = curr_speed;
-		}
+		if (curr_speed > max_speed)
+			max_speed = curr_speed;
 	}
 
 	Rest_Distance += max_speed;
 
 	while (Rest_Distance > 0)
 	{
-		for (i = 0; i < AsConfig::Max_Movers_Count; i++)
+		for (auto *curr_module : Modules)
 		{
-			if (Modules[i] != 0)
-			{
-				Modules[i]->Advance(max_speed);
+			curr_module->Advance(max_speed);
 
-				if (Modules[i] == &Platform && Platform.Get_State() == EPlatform_State::Glue) 
-					if ( ! (Platform.Get_Moving_State() == EPlatform_Moving_State::Stop || Platform.Get_Moving_State() == EPlatform_Moving_State::Stopping) )
-						Ball_Set.Forced_Advance(Platform.Get_X_Offset() );
-			}
+			if (curr_module == &Platform && Platform.Get_State() == EPlatform_State::Glue) 
+				if ( ! (Platform.Get_Moving_State() == EPlatform_Moving_State::Stop || Platform.Get_Moving_State() == EPlatform_Moving_State::Stopping) )
+					Ball_Set.Forced_Advance(Platform.Get_X_Offset() );
 		}
 
 		Rest_Distance -= AsConfig::Moving_Step_Size;
 	}
 
-	for (i = 0; i < AsConfig::Max_Movers_Count; i++)
-		if (Modules[i] != 0)
-			Modules[i]->Finish_Movement();
+	for (auto *curr_module : Modules)
+		curr_module->Finish_Movement();
 }
 //------------------------------------------------------------------------------------------------------------
 void AsEngine::On_Falling_Letter(AFalling_Letter *falling_letter)
@@ -292,13 +276,5 @@ void AsEngine::On_Falling_Letter(AFalling_Letter *falling_letter)
 	}
 
 	falling_letter->Destroy();
-}
-//------------------------------------------------------------------------------------------------------------
-void AsEngine::Add_Next_Module(int &index, AGame_Object *game_obj)
-{
-	if (index >= 0 && index < AsConfig::Max_Laser_Beams_Count)
-		Modules[index++] = game_obj;
-	else
-		AsTools::Throw();
 }
 //------------------------------------------------------------------------------------------------------------

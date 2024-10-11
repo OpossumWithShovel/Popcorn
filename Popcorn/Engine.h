@@ -41,7 +41,6 @@ private:
 	void Play_Level();
 	void Advance_Movers();
 	void On_Falling_Letter(AFalling_Letter *falling_letter);
-	void Add_Next_Module(int &index, AGame_Object *game_obj);
 
 	EGame_State Game_State;
 
@@ -55,6 +54,6 @@ private:
 	AsMonsters_Set Monsters_Set;
 	AsInfo_Panel Info_Panel;
 
-	AGame_Object *Modules[AsConfig::Max_Modules_Count];
+	std::vector<AGame_Object *> Modules;
 };
 //-----------------------------------------------------------------------------------------------------------
