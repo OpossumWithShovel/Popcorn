@@ -126,7 +126,7 @@ bool ABall::Is_Finished()
 	return false;  // Заглушка. Этот метод не используется
 }
 //------------------------------------------------------------------------------------------------------------
-double ABall::Get_Direction() const
+double ABall::Get_Direction()
 {
 	return Ball_Direction;
 }
@@ -164,7 +164,7 @@ void ABall::Set_Direction(double new_direction)
 	Ball_Direction = new_direction;
 }
 //------------------------------------------------------------------------------------------------------------
-EBall_State ABall::Get_State() const
+EBall_State ABall::Get_State()
 {
 	return Ball_State;
 }
@@ -272,7 +272,7 @@ void ABall::Reflect(bool from_horizontal)
 		Set_Direction(M_PI - Ball_Direction);
 }
 //------------------------------------------------------------------------------------------------------------
-bool ABall::Is_Move_Up() const
+bool ABall::Is_Moving_Up()
 {
 	if (Ball_Direction >= 0.0 && Ball_Direction < M_PI)
 		return true;
@@ -280,7 +280,7 @@ bool ABall::Is_Move_Up() const
 		return false;
 }
 //------------------------------------------------------------------------------------------------------------
-bool ABall::Is_Move_Left() const
+bool ABall::Is_Moving_Left()
 {
 	if (Ball_Direction > M_PI_2 && Ball_Direction < M_PI + M_PI_2)
 		return true;
@@ -288,7 +288,7 @@ bool ABall::Is_Move_Left() const
 		return false;
 }
 //------------------------------------------------------------------------------------------------------------
-void ABall::Set_On_Parashute(int brick_y, int brick_x)
+void ABall::Set_On_Parachute(int brick_y, int brick_x)
 {
 	int cell_x, cell_y;
 
@@ -313,13 +313,13 @@ void ABall::Set_On_Parashute(int brick_y, int brick_x)
 	Ball_State = EBall_State::On_Parashute;
 }
 //------------------------------------------------------------------------------------------------------------
-void ABall::Get_Center(double &x_pos, double &y_pos) const
+void ABall::Get_Center(double &x_pos, double &y_pos)
 {
 	x_pos = Center_X_Pos;
 	y_pos = Center_Y_Pos;
 }
 //------------------------------------------------------------------------------------------------------------
-void ABall::Draw_Teleporting(HDC hdc, int step) const
+void ABall::Draw_Teleporting(HDC hdc, int step)
 {
 	int top = Ball_Rect.top + step;
 	int bottom_y = Ball_Rect.bottom - step - 1;

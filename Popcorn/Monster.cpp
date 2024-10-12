@@ -336,14 +336,12 @@ const EEye_State AMonster_Eye::Blink_States[] =
 //------------------------------------------------------------------------------------------------------------
 AMonster_Eye::~AMonster_Eye()
 {
-
 }
 //------------------------------------------------------------------------------------------------------------
 AMonster_Eye::AMonster_Eye()
 : Eye_State(EEye_State::Closed), Start_Blink_Timer_Tick(0), Total_Animation_Timeout(0), Cornea_Height(0.0),
   Blink_Ticks(Blinks_Stages_Count)
 {
-
 }
 //------------------------------------------------------------------------------------------------------------
 void AMonster_Eye::Act_Alive()

@@ -4,7 +4,6 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
-
 #include <string>
 #include <vector>
 
@@ -26,16 +25,16 @@ enum class EBall_State: unsigned char
 class ABall_Object
 {
 public:
-	virtual double Get_Direction() const = 0;
+	virtual double Get_Direction() = 0;
 	virtual void Set_Direction(double new_direction) = 0;
-	virtual EBall_State Get_State() const = 0;
+	virtual EBall_State Get_State() = 0;
 	virtual void Set_State(EBall_State new_state, double x_pos = 0, double y_pos = 0) = 0;
 	virtual void Reflect(bool from_horizontal) = 0;
-	virtual bool Is_Move_Up() const = 0;
-	virtual bool Is_Move_Left() const = 0;
-	virtual void Set_On_Parashute(int brick_y, int brick_x) = 0;
-	virtual void Get_Center(double &x_pos, double &y_pos) const = 0;
-	virtual void Draw_Teleporting(HDC hdc, int step) const = 0; 
+	virtual void Draw_Teleporting(HDC hdc, int step) = 0; 
+	virtual void Set_On_Parachute(int brick_y, int brick_x) = 0;
+	virtual void Get_Center(double &x_pos, double &y_pos) = 0;
+	virtual bool Is_Moving_Up() = 0;
+	virtual bool Is_Moving_Left() = 0;
 };
 //------------------------------------------------------------------------------------------------------------
 class AMover
@@ -83,7 +82,7 @@ public:
 protected:
 	virtual bool Get_Next_Obj(int &index, AGame_Object **game_obj) = 0;
 };
-//-----------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
 class AString
 {
 public:
@@ -92,7 +91,7 @@ public:
 
 	void Append(int value);
 	const wchar_t *Get_Content();
-	int Get_Lenght();
+	int Get_Length();
 
 private:
 	std::wstring Content;

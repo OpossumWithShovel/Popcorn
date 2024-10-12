@@ -35,9 +35,9 @@ private:
 
 	AsFrame_DC Frame_DC;
 	AsEngine Engine;
-	HINSTANCE Instance; // current instance
-	WCHAR szTitle[Max_Load_String]; // The title bar text
-	WCHAR szWindowClass[Max_Load_String]; // the main window class name
+	HINSTANCE Instance;  // current instance
+	WCHAR szTitle[Max_Load_String];  // The title bar text
+	WCHAR szWindowClass[Max_Load_String];  // the main window class name
 
 	static LRESULT CALLBACK Window_Proc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
 	static INT_PTR CALLBACK About(HWND hdlg, UINT message, WPARAM wparam, LPARAM lparam);

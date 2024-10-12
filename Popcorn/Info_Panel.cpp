@@ -264,12 +264,12 @@ void AsInfo_Panel::Draw_String(HDC hdc, RECT &str_rect, HFONT &font, AString &st
 	SelectObject(hdc, font);
 	SetTextColor(hdc, color.Get_RGB() );
 
-	GetTextExtentPoint32(hdc, str.Get_Content(), str.Get_Lenght(), &str_size);
+	GetTextExtentPoint32(hdc, str.Get_Content(), str.Get_Length(), &str_size);
 
 	str_x_pos = str_rect.left + (str_rect.right - str_rect.left) / 2 - str_size.cx / 2;
 	str_y_pos = str_rect.top + (str_rect.bottom - str_rect.top) / 2 - str_size.cy / 2;
 
-	TextOut(hdc, str_x_pos, str_y_pos, str.Get_Content(), str.Get_Lenght() );
+	TextOut(hdc, str_x_pos, str_y_pos, str.Get_Content(), str.Get_Length() );
 }
 //-----------------------------------------------------------------------------------------------------------
 void AsInfo_Panel::Draw_Rect_With_Shadow(HDC hdc, RECT &panel_rect, const AColor &panel_color)

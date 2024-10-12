@@ -1,19 +1,5 @@
 #include "framework.h"
 #include "Main.h"
-
-// Global Variables:
-AsMain_Window Main_Window;
-
-//------------------------------------------------------------------------------------------------------------
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
-{
-	return Main_Window.Main(hInstance, nCmdShow);
-}
-//------------------------------------------------------------------------------------------------------------
-
-
-
-
 // AsFrame_DC
 //------------------------------------------------------------------------------------------------------------
 AsFrame_DC::~AsFrame_DC()
@@ -32,15 +18,15 @@ AsFrame_DC::AsFrame_DC()
 //------------------------------------------------------------------------------------------------------------
 HDC AsFrame_DC::Get_DC(HWND hwnd, HDC hdc)
 {
-	int frame_dc_width, frame_dc_height;
+	int dc_width, dc_height;
 	RECT rect;
 
 	GetClientRect(hwnd, &rect);
 
-	frame_dc_width = rect.right - rect.left;
-	frame_dc_height = rect.bottom - rect.top;
+	dc_width = rect.right - rect.left;
+	dc_height = rect.bottom - rect.top;
 
-	if (Width != frame_dc_width && Height != frame_dc_height)
+	if (dc_width != Width && dc_height != Height)
 	{
 		if (Bitmap != 0)
 			DeleteObject(Bitmap);
@@ -48,18 +34,32 @@ HDC AsFrame_DC::Get_DC(HWND hwnd, HDC hdc)
 		if (DC != 0)
 			DeleteObject(DC);
 
-		Width = frame_dc_width;
-		Height = frame_dc_height;
+		Width = dc_width;
+		Height = dc_height;
 
 		DC = CreateCompatibleDC(hdc);
 		Bitmap = CreateCompatibleBitmap(hdc, Width, Height);
-
 		SelectObject(DC, Bitmap);
+
+		++rect.right;
+		++rect.bottom;
 
 		AsTools::Rect(DC, rect, AsConfig::BG_Color);
 	}
 
 	return DC;
+}
+//------------------------------------------------------------------------------------------------------------
+
+
+
+
+// Global Variables:
+AsMain_Window Main_Window;
+//------------------------------------------------------------------------------------------------------------
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
+{
+	return Main_Window.Main(hInstance, nCmdShow);
 }
 //------------------------------------------------------------------------------------------------------------
 
@@ -77,36 +77,36 @@ AsMain_Window::AsMain_Window()
 //------------------------------------------------------------------------------------------------------------
 int APIENTRY AsMain_Window::Main(HINSTANCE instance, int command_show)
 {
-	MSG message;
 	HACCEL accel_table;
+	MSG msg;
 
-	Instance = instance;
+	Instance = instance; // Store instance handle in our global variable
 
 	// Initialize global strings
-	LoadStringW(instance, IDS_APP_TITLE, szTitle, Max_Load_String);
-	LoadStringW(instance, IDC_POPCORN, szWindowClass, Max_Load_String);
+	LoadStringW(Instance, IDS_APP_TITLE, szTitle, Max_Load_String);
+	LoadStringW(Instance, IDC_POPCORN, szWindowClass, Max_Load_String);
 	Register_Class();
 
 	// Perform application initialization:
-	if (!Init_Instance(command_show) )
+	if (! Init_Instance(command_show) )
 		return FALSE;
 
-	accel_table = LoadAccelerators(instance, MAKEINTRESOURCE(IDC_POPCORN) );
+	accel_table = LoadAccelerators(Instance, MAKEINTRESOURCE(IDC_POPCORN) );
 
 	// Main message loop:
-	while (GetMessage(&message, nullptr, 0, 0))
-		if (!TranslateAccelerator(message.hwnd, accel_table, &message))
+	while (GetMessage(&msg, nullptr, 0, 0))
+		if (!TranslateAccelerator(msg.hwnd, accel_table, &msg))
 		{
-			TranslateMessage(&message);
-			DispatchMessage(&message);
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
 
-	return (int)message.wParam;
+	return (int)msg.wParam;
 }
 //------------------------------------------------------------------------------------------------------------
 ATOM AsMain_Window::Register_Class()
 {
-	WNDCLASSEXW wcex{};
+	WNDCLASSEXW wcex;
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
 
@@ -120,7 +120,7 @@ ATOM AsMain_Window::Register_Class()
 	wcex.hbrBackground = AsConfig::BG_Color.Get_Brush();
 	wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_POPCORN);
 	wcex.lpszClassName = szWindowClass;
-	wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL) );
+	wcex.hIconSm = LoadIcon(Instance, MAKEINTRESOURCE(IDI_SMALL) );
 
 	return RegisterClassExW(&wcex);
 }
@@ -128,7 +128,7 @@ ATOM AsMain_Window::Register_Class()
 BOOL AsMain_Window::Init_Instance(int command_show)
 {
 	HWND hwnd;
-	RECT window_rect{};
+	RECT window_rect;
 
 	window_rect.left = 0;
 	window_rect.top = 0;
@@ -139,7 +139,7 @@ BOOL AsMain_Window::Init_Instance(int command_show)
 
 	hwnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, 0, 0, window_rect.right - window_rect.left, window_rect.bottom - window_rect.top, 0, 0, Instance, 0);
 
-	if (!hwnd)
+	if (hwnd == 0)
 		return FALSE;
 
 	Engine.Init_Engine(hwnd);
@@ -164,77 +164,31 @@ void AsMain_Window::On_Paint(HWND hwnd)
 	EndPaint(hwnd, &ps);
 }
 //------------------------------------------------------------------------------------------------------------
-LRESULT CALLBACK AsMain_Window::Window_Proc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK AsMain_Window::Window_Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int wmId;
 
 	switch (message)
 	{
 	case WM_COMMAND:
-	{
-		wmId = LOWORD(wparam);
+		wmId = LOWORD(wParam);
 		// Parse the menu selections:
 		switch (wmId)
 		{
 		case IDM_ABOUT:
-			DialogBox(Self->Instance, MAKEINTRESOURCE(IDD_ABOUTBOX), hwnd, About);
+			DialogBox(Self->Instance, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 			break;
-
 		case IDM_EXIT:
-			DestroyWindow(hwnd);
+			DestroyWindow(hWnd);
 			break;
-
 		default:
-			return DefWindowProc(hwnd, message, wparam, lparam);
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
-	}
 	break;
 
 
 	case WM_PAINT:
-		Self->On_Paint(hwnd);
-		break;
-
-
-	case WM_TIMER:
-		if (wparam == Self->Engine.Timer_ID)
-			return Self->Engine.On_Timer();
-		break;
-
-
-	case WM_KEYDOWN:
-		switch(wparam)
-		{
-		case VK_LEFT:
-			return Self->Engine.On_Key(EKey_Type::Left, true);
-			break;
-
-		case VK_RIGHT:
-			return Self->Engine.On_Key(EKey_Type::Right, true);
-			break;
-
-		case VK_SPACE:
-			return Self->Engine.On_Key(EKey_Type::Space, true);
-			break;
-		}
-		break;
-
-
-	case WM_KEYUP:
-		switch(wparam)
-		{
-		case VK_LEFT:
-			return Self->Engine.On_Key(EKey_Type::Left, false);
-			break;
-
-		case VK_RIGHT:
-			return Self->Engine.On_Key(EKey_Type::Right, false);
-			break;
-
-		case VK_SPACE:
-			return Self->Engine.On_Key(EKey_Type::Space, false);
-			break;
-		}
+		Self->On_Paint(hWnd);
 		break;
 
 
@@ -243,28 +197,68 @@ LRESULT CALLBACK AsMain_Window::Window_Proc(HWND hwnd, UINT message, WPARAM wpar
 		break;
 
 
+	case WM_KEYDOWN:
+		switch (wParam)
+		{
+		case VK_LEFT:
+			return Self->Engine.On_Key(EKey_Type::Left, true);
+
+		case VK_RIGHT:
+			return Self->Engine.On_Key(EKey_Type::Right, true);
+
+		case VK_SPACE:
+			return Self->Engine.On_Key(EKey_Type::Space, true);
+		}
+		break;
+
+
+	case WM_KEYUP:
+		switch (wParam)
+		{
+		case VK_LEFT:
+			return Self->Engine.On_Key(EKey_Type::Left, false);
+
+		case VK_RIGHT:
+			return Self->Engine.On_Key(EKey_Type::Right, false);
+
+		case VK_SPACE:
+			return Self->Engine.On_Key(EKey_Type::Space, false);
+		}
+		break;
+
+
+	case WM_TIMER:
+		if (wParam == Self->Engine.Timer_ID)
+			return Self->Engine.On_Timer();
+		break;
+
+
 	default:
-		return DefWindowProc(hwnd, message, wparam, lparam);
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
+
 	return 0;
 }
 //------------------------------------------------------------------------------------------------------------
-INT_PTR CALLBACK AsMain_Window::About(HWND hdlg, UINT message, WPARAM wparam, LPARAM lparam)
+INT_PTR CALLBACK AsMain_Window::About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	UNREFERENCED_PARAMETER(lparam);
+	UNREFERENCED_PARAMETER(lParam);
+
 	switch (message)
 	{
 	case WM_INITDIALOG:
 		return (INT_PTR)TRUE;
 
+
 	case WM_COMMAND:
-		if (LOWORD(wparam) == IDOK || LOWORD(wparam) == IDCANCEL)
+		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
 		{
-			EndDialog(hdlg, LOWORD(wparam) );
+			EndDialog(hDlg, LOWORD(wParam));
 			return (INT_PTR)TRUE;
 		}
 		break;
 	}
+
 	return (INT_PTR)FALSE;
 }
 //------------------------------------------------------------------------------------------------------------

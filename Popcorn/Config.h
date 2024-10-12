@@ -10,15 +10,15 @@ public:
 	AColor();
 	AColor(unsigned char r, unsigned char g, unsigned char b);
 	AColor(const AColor &color, int pen_tickness);
+	AColor(unsigned char r, unsigned char g, unsigned char b, int pen_tickness);
 	AColor(const AColor &pen_color, const AColor &brush_color, int pen_tickness);
 
 	void operator = (const AColor &another);
 	void Set_As(unsigned char r, unsigned char g, unsigned char b);
-
 	int Get_RGB() const;
-	HBRUSH Get_Brush() const;
 	void Select(HDC hdc) const;
 	void Select_Pen(HDC hdc) const;
+	HBRUSH Get_Brush() const;
 
 	unsigned char R, G, B;
 
@@ -97,7 +97,6 @@ public:
 	static void Rect(HDC hdc, int x, int y, int width, int height, const AColor &color);
 	static void Ellipse(HDC hdc, RECT &rect, const AColor &color);
 	static void Ellipse(HDC hdc, int x, int y, int width, int height, const AColor &color);
-	static void Ellipse_Outline(HDC hdc, RECT &rect, const AColor &color);
 	static void Invalidate_Rect(RECT &rect);
 	static unsigned char Get_Fading_Channel(unsigned char channel, unsigned char bg_channel, int step, int steps_count);
 	static void Get_Fading_Color(const AColor &origin_color, int step, AColor &result_color, int max_step);

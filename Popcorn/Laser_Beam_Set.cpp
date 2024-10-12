@@ -1,13 +1,13 @@
-﻿#include "Laser_Beams_Set.h"
+﻿#include "Laser_Beam_Set.h"
 
-// ALaser_Beams_Set
+// AsLaser_Beam_Set
 //------------------------------------------------------------------------------------------------------------
-ALaser_Beams_Set::ALaser_Beams_Set()
+AsLaser_Beam_Set::AsLaser_Beam_Set()
 : Laser_Beams(AsConfig::Max_Laser_Beams_Count)
 {
 }
 //------------------------------------------------------------------------------------------------------------
-void ALaser_Beams_Set::Fire(double left_gun_x_pos, double right_gun_x_pos)
+void AsLaser_Beam_Set::Fire(double left_gun_x_pos, double right_gun_x_pos)
 {
 	ALaser_Beam *left_beam = 0, *right_beam = 0;
 
@@ -34,13 +34,13 @@ void ALaser_Beams_Set::Fire(double left_gun_x_pos, double right_gun_x_pos)
 		AsTools::Throw();
 }
 //------------------------------------------------------------------------------------------------------------
-void ALaser_Beams_Set::Disable_All()
+void AsLaser_Beam_Set::Disable_All()
 {
 	for (auto &curr_beam : Laser_Beams)
 		curr_beam.Disable();
 }
 //------------------------------------------------------------------------------------------------------------
-bool ALaser_Beams_Set::Get_Next_Obj(int &index, AGame_Object **game_obj)
+bool AsLaser_Beam_Set::Get_Next_Obj(int &index, AGame_Object **game_obj)
 {
 	if (index < 0 || index >= (int)Laser_Beams.size() )
 		return false;

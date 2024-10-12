@@ -6,6 +6,7 @@ AColor::~AColor()
 {
 	if (Pen != 0)
 		DeleteObject(Pen);
+
 	if (Brush != 0)
 		DeleteObject(Brush);
 }
@@ -18,14 +19,20 @@ AColor::AColor()
 AColor::AColor(unsigned char r, unsigned char g, unsigned char b)
 	: R(r), G(g), B(b), Pen(0), Brush(0)
 {
-	Pen = CreatePen(PS_SOLID, 0, RGB(R, G, B) );
-	Brush = CreateSolidBrush(RGB(R, G, B) );
+	Pen = CreatePen(PS_SOLID, 0, RGB(r, g, b) );
+	Brush = CreateSolidBrush(RGB(r, g, b) );
 }
 //------------------------------------------------------------------------------------------------------------
 AColor::AColor(const AColor &color, int pen_tickness)
 	: R(color.R), G(color.G), B(color.B), Pen(0), Brush(0)
 {
 	Pen = CreatePen(PS_SOLID, pen_tickness, color.Get_RGB() );
+}
+//------------------------------------------------------------------------------------------------------------
+AColor::AColor(unsigned char r, unsigned char g, unsigned char b, int pen_tickness)
+	: R(r), G(g), B(b), Pen(0), Brush(0)
+{
+	Pen = CreatePen(PS_SOLID, pen_tickness, RGB(r, g, b) );
 }
 //------------------------------------------------------------------------------------------------------------
 AColor::AColor(const AColor &pen_color, const AColor &brush_color, int pen_tickness)
@@ -61,11 +68,6 @@ int AColor::Get_RGB() const
 	return RGB(R, G, B);
 }
 //------------------------------------------------------------------------------------------------------------
-HBRUSH AColor::Get_Brush() const
-{
-	return Brush;
-}
-//------------------------------------------------------------------------------------------------------------
 void AColor::Select(HDC hdc) const
 {
 	SelectObject(hdc, Pen);
@@ -75,6 +77,11 @@ void AColor::Select(HDC hdc) const
 void AColor::Select_Pen(HDC hdc) const
 {
 	SelectObject(hdc, Pen);
+}
+//------------------------------------------------------------------------------------------------------------
+HBRUSH AColor::Get_Brush() const
+{
+	return Brush;
 }
 //------------------------------------------------------------------------------------------------------------
 
@@ -168,12 +175,6 @@ void AsTools::Ellipse(HDC hdc, int x, int y, int width, int height, const AColor
 
 	color.Select(hdc);
 	::Ellipse(hdc, x * scale, y * scale, (x + width) * scale - 1, (y + height) * scale - 1);
-}
-//------------------------------------------------------------------------------------------------------------
-void AsTools::Ellipse_Outline(HDC hdc, RECT &rect, const AColor &color)
-{
-	color.Select(hdc);
-	Arc(hdc, rect.left, rect.top, rect.right - 1, rect.bottom - 1, 0, 0, 0, 0);
 }
 //------------------------------------------------------------------------------------------------------------
 void AsTools::Invalidate_Rect(RECT &rect)

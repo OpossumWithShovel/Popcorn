@@ -131,7 +131,7 @@ const wchar_t *AString::Get_Content()
 	return Content.c_str();
 }
 //-----------------------------------------------------------------------------------------------------------
-int AString::Get_Lenght()
+int AString::Get_Length()
 {
 	return (int)Content.length();
 }

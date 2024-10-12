@@ -11,11 +11,11 @@ enum class EMonster_Set_State: unsigned char
 	Waitinig_For_Close_Gate
 };
 //------------------------------------------------------------------------------------------------------------
-class AsMonsters_Set: public AHit_Checker, public AGame_Objects_Set
+class AsMonster_Set: public AHit_Checker, public AGame_Objects_Set
 {
 public:
-	~AsMonsters_Set();
-	AsMonsters_Set();
+	~AsMonster_Set();
+	AsMonster_Set();
 
 	virtual bool Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *ball);
 	virtual bool Check_Hit(double next_x_pos, double next_y_pos);

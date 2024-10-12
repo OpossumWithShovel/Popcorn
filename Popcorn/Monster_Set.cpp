@@ -1,8 +1,8 @@
-﻿#include "AsMonsters_Set.h"
+﻿#include "Monster_Set.h"
 
-// AsMonsters_Set
+// AsMonster_Set
 //------------------------------------------------------------------------------------------------------------
-AsMonsters_Set::~AsMonsters_Set()
+AsMonster_Set::~AsMonster_Set()
 {
 	for (auto *curr_monster : Monsters)
 		delete curr_monster;
@@ -10,13 +10,13 @@ AsMonsters_Set::~AsMonsters_Set()
 	Monsters.erase(Monsters.begin(), Monsters.end() );
 }
 //------------------------------------------------------------------------------------------------------------
-AsMonsters_Set::AsMonsters_Set()
+AsMonster_Set::AsMonster_Set()
 : Monster_Set_State(EMonster_Set_State::Idle), Current_Gate(0),
   Max_Alive_Monsters_Count(0), Border(0)
 {
 }
 //------------------------------------------------------------------------------------------------------------
-bool AsMonsters_Set::Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *ball)
+bool AsMonster_Set::Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *ball)
 {
 	for (auto *curr_monster : Monsters)
 		if (curr_monster->Check_Hit(next_x_pos, next_y_pos, ball) )
@@ -25,7 +25,7 @@ bool AsMonsters_Set::Check_Hit(double next_x_pos, double next_y_pos, ABall_Objec
 	return false;
 }
 //------------------------------------------------------------------------------------------------------------
-bool AsMonsters_Set::Check_Hit(double next_x_pos, double next_y_pos)
+bool AsMonster_Set::Check_Hit(double next_x_pos, double next_y_pos)
 {
 	for (auto *curr_monster : Monsters)
 		if (curr_monster->Check_Hit(next_x_pos, next_y_pos) )
@@ -34,7 +34,7 @@ bool AsMonsters_Set::Check_Hit(double next_x_pos, double next_y_pos)
 	return false;
 }
 //------------------------------------------------------------------------------------------------------------
-bool AsMonsters_Set::Check_Hit(RECT &rect)
+bool AsMonster_Set::Check_Hit(RECT &rect)
 {
 	for (auto *curr_monster : Monsters)
 		if (curr_monster->Check_Hit(rect) )
@@ -43,7 +43,7 @@ bool AsMonsters_Set::Check_Hit(RECT &rect)
 	return false;
 }
 //------------------------------------------------------------------------------------------------------------
-void AsMonsters_Set::Act()
+void AsMonster_Set::Act()
 {
 	int curr_alive_monsters_count;
 
@@ -68,7 +68,7 @@ void AsMonsters_Set::Act()
 
 
 	case EMonster_Set_State::Waitinig_For_Open_Gate:
-		if (Border->Is_Gate_Open(Current_Gate) )
+		if (Border->Is_Gate_Opened(Current_Gate) )
 		{
 			Let_Out(Current_Gate);
 			Monster_Set_State = EMonster_Set_State::Waitinig_For_Close_Gate;
@@ -103,7 +103,7 @@ void AsMonsters_Set::Act()
 	AGame_Objects_Set::Act();
 }
 //------------------------------------------------------------------------------------------------------------
-void AsMonsters_Set::Init(AsBorder *border)
+void AsMonster_Set::Init(AsBorder *border)
 {
 	if (border == 0)
 		AsTools::Throw();
@@ -111,13 +111,13 @@ void AsMonsters_Set::Init(AsBorder *border)
 	Border = border;
 }
 //------------------------------------------------------------------------------------------------------------
-void AsMonsters_Set::Activate(int max_alive_monsters_count)
+void AsMonster_Set::Activate(int max_alive_monsters_count)
 {
 	Max_Alive_Monsters_Count = max_alive_monsters_count;
 	Monster_Set_State = EMonster_Set_State::Select_Next_Gate;
 }
 //------------------------------------------------------------------------------------------------------------
-void AsMonsters_Set::Let_Out(int gate_index)
+void AsMonster_Set::Let_Out(int gate_index)
 {
 	bool is_gate_left;
 	int gate_x_pos, gate_y_pos;
@@ -143,7 +143,7 @@ void AsMonsters_Set::Let_Out(int gate_index)
 	curr_monster->Let_Out(gate_x_pos, gate_y_pos, is_gate_left);
 }
 //------------------------------------------------------------------------------------------------------------
-void AsMonsters_Set::Destroy_All()
+void AsMonster_Set::Destroy_All()
 {
 	for (auto *curr_monster : Monsters)
 		curr_monster->Destroy();
@@ -151,7 +151,7 @@ void AsMonsters_Set::Destroy_All()
 	Monster_Set_State = EMonster_Set_State::Idle;
 }
 //------------------------------------------------------------------------------------------------------------
-bool AsMonsters_Set::Get_Next_Obj(int &index, AGame_Object **game_obj)
+bool AsMonster_Set::Get_Next_Obj(int &index, AGame_Object **game_obj)
 {
 	AMonster *curr_monster = 0;
 
@@ -160,6 +160,6 @@ bool AsMonsters_Set::Get_Next_Obj(int &index, AGame_Object **game_obj)
 
 	*game_obj = Monsters[index++];
 
-	return false;
+	return true;
 }
 //------------------------------------------------------------------------------------------------------------

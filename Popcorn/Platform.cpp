@@ -239,7 +239,7 @@ bool AsPlatform::Is_Finished()
 	return false;  // Заглушка. Этот метод не используется
 }
 //------------------------------------------------------------------------------------------------------------
-bool AsPlatform::Across_By(AFalling_Letter *falling_letter) const
+bool AsPlatform::Hit_By(AFalling_Letter *falling_letter) const
 {
 	RECT intersection_rect, letter_cell;
 
@@ -278,7 +278,7 @@ void AsPlatform::On_Space_Key(bool key_down)
 		Ball_Set->Release_From_Glue_Platform();
 }
 //------------------------------------------------------------------------------------------------------------
-void AsPlatform::Init(AsBall_Set *ball_set, ALaser_Beams_Set *laser_beams_set)
+void AsPlatform::Init(AsBall_Set *ball_set, AsLaser_Beam_Set *laser_beams_set)
 {
 	Platform_Expanding.Init(Inner_Color, Circle_Color, Highlight_Color);
 	Platform_Laser.Init(Inner_Color, Circle_Color, laser_beams_set);

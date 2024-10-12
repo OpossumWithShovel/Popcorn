@@ -26,23 +26,19 @@ public:
 	static void Setup_Colors();
 
 private:
+	void Update_Rect();
 	void Act_Expanding_State();
 	void Act_Fading_State();
-	void Update_Rect();
 
 	EExplosive_Ball_State Explosive_Ball_State;
-
 	bool Is_Red;
-
-	int Start_Explode_Tick, Start_Fading_Tick, End_Explode_Tick;
-
 	double X_Pos, Y_Pos;
 	double Size, Max_Size;
+	int Start_Explode_Tick, Start_Fading_Tick, End_Explode_Tick;
 
 	RECT Curr_Rect;
 
 	AColor *Curr_Ball_Color;
-	AColor *Curr_Outline_Color;
 
 	static const int Expanding_Timeout = AsConfig::FPS / 2;
 	static const int Fading_Timeout = AsConfig::FPS / 2;
@@ -50,6 +46,5 @@ private:
 
 	static AColor Fading_Red_Colors[Fading_Steps_Count];
 	static AColor Fading_Blue_Colors[Fading_Steps_Count];
-	static AColor Fading_Outline_Colors[Fading_Steps_Count];
 };
 //------------------------------------------------------------------------------------------------------------

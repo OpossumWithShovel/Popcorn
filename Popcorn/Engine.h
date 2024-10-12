@@ -1,12 +1,20 @@
-#pragma once
+﻿#pragma once
 
-#include "Ball_Set.h"
+#include "Border.h"
 #include "Level.h"
 #include "Platform.h"
-#include "AsMonsters_Set.h"
+#include "Ball_Set.h"
+#include "Monster_Set.h"
 #include "Info_Panel.h"
 
-//-----------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
+enum class EKey_Type: unsigned char
+{
+	Left,
+	Right,
+	Space
+};
+//------------------------------------------------------------------------------------------------------------
 enum class EGame_State: unsigned char
 {
 	Test_Ball,
@@ -15,14 +23,7 @@ enum class EGame_State: unsigned char
 	Lost_Ball,
 	Restart_Level
 };
-//-----------------------------------------------------------------------------------------------------------
-enum class EKey_Type: unsigned char
-{
-	Left,
-	Right,
-	Space
-};
-//-----------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
 class AsEngine
 {
 public:
@@ -36,24 +37,23 @@ public:
 	const int Timer_ID;
 
 private:
-	void Act();
 	void Restart_Level();
 	void Play_Level();
 	void Advance_Movers();
+	void Act();
 	void On_Falling_Letter(AFalling_Letter *falling_letter);
 
 	EGame_State Game_State;
-
 	double Rest_Distance;
 
-	AsBall_Set Ball_Set;
-	AsPlatform Platform;
 	AsLevel Level;
+	AsPlatform Platform;
 	AsBorder Border;
-	ALaser_Beams_Set Laser_Beams_Set;
-	AsMonsters_Set Monsters_Set;
+	AsBall_Set Ball_Set;
+	AsLaser_Beam_Set Laser_Beam_Set;
+	AsMonster_Set Monster_Set;
 	AsInfo_Panel Info_Panel;
 
-	std::vector<AGame_Object *> Modules;
+	std::vector<AGame_Object *> Modules;  // UNO; Главные графические объекты (модули) игры
 };
-//-----------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------

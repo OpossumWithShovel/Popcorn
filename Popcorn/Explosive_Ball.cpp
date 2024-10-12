@@ -3,12 +3,11 @@
 // AExplosive_Ball
 AColor AExplosive_Ball::Fading_Red_Colors[Fading_Steps_Count];
 AColor AExplosive_Ball::Fading_Blue_Colors[Fading_Steps_Count];
-AColor AExplosive_Ball::Fading_Outline_Colors[Fading_Steps_Count];
 //------------------------------------------------------------------------------------------------------------
 AExplosive_Ball::AExplosive_Ball()
 	: Explosive_Ball_State(EExplosive_Ball_State::Idle), Is_Red(false), X_Pos(0.0), Y_Pos(0.0),
 	Start_Explode_Tick(0), Start_Fading_Tick(0), End_Explode_Tick(0),
-	Size(0), Max_Size(0), Curr_Rect{}, Curr_Ball_Color(0), Curr_Outline_Color(0)
+	Size(0), Max_Size(0), Curr_Rect{}, Curr_Ball_Color(0)
 {
 }
 //------------------------------------------------------------------------------------------------------------
@@ -55,11 +54,8 @@ void AExplosive_Ball::Draw(HDC hdc, RECT &paint_area)
 	if (Explosive_Ball_State == EExplosive_Ball_State::Idle)
 		return;
 
-	if (Curr_Ball_Color != 0 && Curr_Outline_Color != 0)
-	{
+	if (Curr_Ball_Color != 0)
 		AsTools::Ellipse(hdc, Curr_Rect, *Curr_Ball_Color);
-		AsTools::Ellipse_Outline(hdc, Curr_Rect, *Curr_Outline_Color);
-	}
 	else
 		AsTools::Throw();
 }
@@ -90,8 +86,6 @@ void AExplosive_Ball::Explode(double x_pos, double y_pos, double max_size, int e
 	else
 		Curr_Ball_Color = &Fading_Blue_Colors[0];
 
-	Curr_Outline_Color = &Fading_Outline_Colors[0];
-
 	Start_Explode_Tick = explode_delay_ticks + AsConfig::Current_Timer_Tick;
 	Start_Fading_Tick = Start_Explode_Tick + Expanding_Timeout;
 	End_Explode_Tick = Start_Fading_Tick + Fading_Timeout;
@@ -105,7 +99,6 @@ void AExplosive_Ball::Setup_Colors()
 	{
 		AsTools::Get_Fading_Color(AsConfig::Red_Color, i, Fading_Red_Colors[i], Fading_Steps_Count);
 		AsTools::Get_Fading_Color(AsConfig::Blue_Color, i, Fading_Blue_Colors[i], Fading_Steps_Count);
-		AsTools::Get_Fading_Color(AsConfig::Explode_Outline_Color, i, Fading_Outline_Colors[i], Fading_Steps_Count);
 	}
 }
 //------------------------------------------------------------------------------------------------------------
@@ -139,8 +132,6 @@ void AExplosive_Ball::Act_Fading_State()
 		Curr_Ball_Color = &Fading_Red_Colors[curr_color_index];
 	else
 		Curr_Ball_Color = &Fading_Blue_Colors[curr_color_index];
-
-	Curr_Outline_Color = &Fading_Outline_Colors[curr_color_index];
 
 	AsTools::Invalidate_Rect(Curr_Rect);
 }

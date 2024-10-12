@@ -18,16 +18,16 @@ public:
 	virtual void Draw(HDC hdc, RECT &paint_area);
 	virtual bool Is_Finished();
 
-	virtual double Get_Direction() const;
+	virtual double Get_Direction();
 	virtual void Set_Direction(double new_direction);
-	virtual EBall_State Get_State() const;
+	virtual EBall_State Get_State();
 	virtual void Set_State(EBall_State new_state, double x_pos = 0, double y_pos = 0);
 	virtual void Reflect(bool from_horizontal);
-	virtual bool Is_Move_Up() const;
-	virtual bool Is_Move_Left() const;
-	virtual void Set_On_Parashute(int brick_y, int brick_x);
-	virtual void Get_Center(double &x_pos, double &y_pos) const;
-	virtual void Draw_Teleporting(HDC hdc, int step) const;
+	virtual bool Is_Moving_Up();
+	virtual bool Is_Moving_Left();
+	virtual void Set_On_Parachute(int brick_y, int brick_x);
+	virtual void Get_Center(double &x_pos, double &y_pos);
+	virtual void Draw_Teleporting(HDC hdc, int step);
 
 	void Set_Speed(double new_speed);
 	void Set_For_Test();

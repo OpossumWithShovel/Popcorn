@@ -368,7 +368,7 @@ bool AsLevel::On_Hit(int brick_y, int brick_x, ABall_Object *ball, bool vertical
 
 	if (brick_type == EBrick_Type::Parashute)
 	{
-		ball->Set_On_Parashute(brick_y, brick_x);
+		ball->Set_On_Parachute(brick_y, brick_x);
 		Current_Level[brick_y][brick_x] = (char)EBrick_Type::None;
 		can_reflect = false;
 	}
@@ -586,7 +586,7 @@ bool AsLevel::Check_Vertical_Hit(double next_x_pos, double next_y_pos, int level
 {
 	double direction = ball->Get_Direction();
 
-	if (ball->Is_Move_Up())
+	if (ball->Is_Moving_Up())
 	{
 		if (Hit_Circle_On_Line(next_y_pos - Current_Brick_Low_Y, next_x_pos, Current_Brick_Left_X, Current_Brick_Right_X, AsConfig::Ball_Radius, reflection_pos))
 		{
@@ -615,7 +615,7 @@ bool AsLevel::Check_Horizontal_Hit(double next_x_pos, double next_y_pos, int lev
 {
 	double direction = ball->Get_Direction();
 
-	if (ball->Is_Move_Left())
+	if (ball->Is_Moving_Left())
 	{
 		if (Hit_Circle_On_Line(next_x_pos - Current_Brick_Right_X, next_y_pos, Current_Brick_Top_Y, Current_Brick_Low_Y, AsConfig::Ball_Radius, reflection_pos))
 		{

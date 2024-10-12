@@ -186,7 +186,7 @@ int AsBorder::Long_Open_Gate()
 	return gate_index;
 }
 //------------------------------------------------------------------------------------------------------------
-bool AsBorder::Is_Gate_Open(int gate_index)
+bool AsBorder::Is_Gate_Opened(int gate_index)
 {
 	if (gate_index >= 0 && gate_index < (int)Gates.size() )
 		return Gates[gate_index]->Is_Gate_Open();

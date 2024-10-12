@@ -52,9 +52,6 @@
     <Filter Include="#Laser_Beam\Laser_Beam">
       <UniqueIdentifier>{5d18b76f-8fd7-4263-80da-5c450a6c1e28}</UniqueIdentifier>
     </Filter>
-    <Filter Include="#Laser_Beam\Laser_Beams_Set">
-      <UniqueIdentifier>{9f0713cd-d7a9-4ebc-942e-dd888236500d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="#Border">
       <UniqueIdentifier>{7982fbda-0bee-4f53-b6a5-acc4299dc46c}</UniqueIdentifier>
     </Filter>
@@ -76,9 +73,6 @@
     <Filter Include="#Monsters">
       <UniqueIdentifier>{85bab71d-e12a-4090-852e-c19d5e6234e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="#Monsters\Monsters_Set">
-      <UniqueIdentifier>{5c52045e-f161-4e8a-afd2-3b72e2445545}</UniqueIdentifier>
-    </Filter>
     <Filter Include="#Monsters\Explosive_Ball">
       <UniqueIdentifier>{db03e140-853c-4bb0-bdc1-f76a13d68b4d}</UniqueIdentifier>
     </Filter>
@@ -99,6 +93,12 @@
     </Filter>
     <Filter Include="#Screen\Info_Panel">
       <UniqueIdentifier>{26590c0f-a19e-427b-85c4-36ba3a6b74a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="#Monsters\Monster_Set">
+      <UniqueIdentifier>{5c52045e-f161-4e8a-afd2-3b72e2445545}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="#Laser_Beam\Laser_Beam_Set">
+      <UniqueIdentifier>{9f0713cd-d7a9-4ebc-942e-dd888236500d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -150,8 +150,8 @@
     <ClInclude Include="Laser_Beam.h">
       <Filter>#Laser_Beam\Laser_Beam</Filter>
     </ClInclude>
-    <ClInclude Include="Laser_Beams_Set.h">
-      <Filter>#Laser_Beam\Laser_Beams_Set</Filter>
+    <ClInclude Include="Laser_Beam_Set.h">
+      <Filter>#Laser_Beam\Laser_Beam_Set</Filter>
     </ClInclude>
     <ClInclude Include="Border.h">
       <Filter>#Border\Border</Filter>
@@ -165,8 +165,8 @@
     <ClInclude Include="Ball_Set.h">
       <Filter>#Ball\Ball_Set</Filter>
     </ClInclude>
-    <ClInclude Include="AsMonsters_Set.h">
-      <Filter>#Monsters\Monsters_Set</Filter>
+    <ClInclude Include="Monster_Set.h">
+      <Filter>#Monsters\Monster_Set</Filter>
     </ClInclude>
     <ClInclude Include="Explosive_Ball.h">
       <Filter>#Monsters\Explosive_Ball</Filter>
@@ -231,8 +231,8 @@
     <ClCompile Include="Laser_Beam.cpp">
       <Filter>#Laser_Beam\Laser_Beam</Filter>
     </ClCompile>
-    <ClCompile Include="Laser_Beams_Set.cpp">
-      <Filter>#Laser_Beam\Laser_Beams_Set</Filter>
+    <ClCompile Include="Laser_Beam_Set.cpp">
+      <Filter>#Laser_Beam\Laser_Beam_Set</Filter>
     </ClCompile>
     <ClCompile Include="Border.cpp">
       <Filter>#Border\Border</Filter>
@@ -246,8 +246,8 @@
     <ClCompile Include="Ball_Set.cpp">
       <Filter>#Ball\Ball_Set</Filter>
     </ClCompile>
-    <ClCompile Include="AsMonsters_Set.cpp">
-      <Filter>#Monsters\Monsters_Set</Filter>
+    <ClCompile Include="Monster_Set.cpp">
+      <Filter>#Monsters\Monster_Set</Filter>
     </ClCompile>
     <ClCompile Include="Explosive_Ball.cpp">
       <Filter>#Monsters\Explosive_Ball</Filter>

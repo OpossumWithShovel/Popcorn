@@ -128,7 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Active_Brick.h" />
-    <ClInclude Include="AsMonsters_Set.h" />
+    <ClInclude Include="Monster_Set.h" />
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Ball_Set.h" />
     <ClInclude Include="Border.h" />
@@ -141,7 +141,7 @@
     <ClInclude Include="Gate.h" />
     <ClInclude Include="Info_Panel.h" />
     <ClInclude Include="Laser_Beam.h" />
-    <ClInclude Include="Laser_Beams_Set.h" />
+    <ClInclude Include="Laser_Beam_Set.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Monster.h" />
@@ -155,7 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active_Brick.cpp" />
-    <ClCompile Include="AsMonsters_Set.cpp" />
+    <ClCompile Include="Monster_Set.cpp" />
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Ball_Set.cpp" />
     <ClCompile Include="Border.cpp" />
@@ -167,7 +167,7 @@
     <ClCompile Include="Gate.cpp" />
     <ClCompile Include="Info_Panel.cpp" />
     <ClCompile Include="Laser_Beam.cpp" />
-    <ClCompile Include="Laser_Beams_Set.cpp" />
+    <ClCompile Include="Laser_Beam_Set.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Monster.cpp" />

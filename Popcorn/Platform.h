@@ -23,7 +23,7 @@ public:
 	virtual void Draw(HDC hdc, RECT &paint_area);
 	virtual bool Is_Finished();
 
-	void Init(AsBall_Set *ball_set, ALaser_Beams_Set *laser_beams_set);
+	void Init(AsBall_Set *ball_set, AsLaser_Beam_Set *laser_beams_set);
 	void Redraw();
 	EPlatform_State Get_State() const;
 	EPlatform_Moving_State Get_Moving_State() const;
@@ -32,7 +32,7 @@ public:
 	bool Has_State(EPlatform_Substate_Regular regular_state) const;
 	void Set_State(EPlatform_Substate_Regular new_regular_substate);
 	void Move(bool to_left, bool key_down);
-	bool Across_By(AFalling_Letter *falling_letter) const;
+	bool Hit_By(AFalling_Letter *falling_letter) const;
 	double Get_Middle_Pos() const;
 	double Get_X_Offset() const;
 	void On_Space_Key(bool key_down);
