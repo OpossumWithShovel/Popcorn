@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Falling_Letter.h"
+#include "Indicator.h"
 
 //-----------------------------------------------------------------------------------------------------------
 enum class EScore_Event_Type: unsigned char
@@ -8,31 +9,6 @@ enum class EScore_Event_Type: unsigned char
 	Hit_Brick,
 	Hit_Monster,
 	Catch_Letter
-};
-//-----------------------------------------------------------------------------------------------------------
-class AIndicator: public AGraphics_Object
-{
-public:
-	AIndicator(int x_pos, int y_pos);
-
-	virtual void Act();
-	virtual void Clear(HDC hdc, RECT &paint_area);
-	virtual void Draw(HDC hdc, RECT &paint_area);
-	virtual bool Is_Finished();
-
-	void Restart();
-
-private:
-	int X_Pos, Y_Pos;
-	int Indicator_Timer_Tick;
-
-	RECT Indicator_Rect;
-
-	static const int Indicator_Width = 13;
-	static const int Indicator_Height = 30;
-	static const int Inner_Width = Indicator_Width - 2;
-	static const int Inner_Height = Indicator_Height - 2;
-	static const int Indicator_Timeout = 5 * AsConfig::FPS;
 };
 //-----------------------------------------------------------------------------------------------------------
 class AsInfo_Panel: public AGame_Object

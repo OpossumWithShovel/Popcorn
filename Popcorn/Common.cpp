@@ -136,3 +136,38 @@ int AString::Get_Length()
 	return (int)Content.length();
 }
 //-----------------------------------------------------------------------------------------------------------
+
+
+
+
+// AMessage
+//------------------------------------------------------------------------------------------------------------
+AMessage::AMessage(EMessage_Type message_type)
+	: Type(message_type)
+{
+}
+//------------------------------------------------------------------------------------------------------------
+
+
+
+
+// AsMessage_Manager
+std::queue<AMessage *> AsMessage_Manager::Message_Queue;
+//------------------------------------------------------------------------------------------------------------
+void AsMessage_Manager::Add_Message(AMessage *message)
+{
+	Message_Queue.push(message);
+}
+//------------------------------------------------------------------------------------------------------------
+bool AsMessage_Manager::Get_Message(AMessage **message)
+{
+	if (Message_Queue.size() == 0)
+		return false;
+
+	*message = Message_Queue.front();
+
+	Message_Queue.pop();
+
+	return true;
+}
+//------------------------------------------------------------------------------------------------------------

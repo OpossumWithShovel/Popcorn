@@ -148,6 +148,8 @@ void AsEngine::Play_Level()
 		Monster_Set.Destroy_All();
 		Laser_Beam_Set.Disable_All();
 		Platform.Set_State(EPlatform_State::Meltdown);
+		Info_Panel.Floor_Indicator.Reset();
+		Info_Panel.Monster_Indicator.Reset();
 	}
 	else
 		Ball_Set.Accelerate();
@@ -207,6 +209,33 @@ void AsEngine::Act()
 	if (Game_State == EGame_State::Restart_Level)
 		if (Border.Is_Gate_Opened(AsConfig::Gates_Count - 1) )
 			Platform.Set_State(EPlatform_State::Rolling);
+
+	Handle_Message();
+}
+//------------------------------------------------------------------------------------------------------------
+void AsEngine::Handle_Message()
+{
+	AMessage *message;
+
+	if (AsMessage_Manager::Get_Message(&message) )
+	{
+		switch (message->Type)
+		{
+		case EMessage_Type::Floor_Is_Ends:
+			AsConfig::Level_Has_Floor = false;
+			Border.Redraw_Floor();
+			break;
+
+		case EMessage_Type::Unfreeze_Monster:
+			Monster_Set.Set_Freeze_State(false);
+			break;
+
+		default:
+			AsTools::Throw();
+		}
+
+		delete message;
+	}
 }
 //------------------------------------------------------------------------------------------------------------
 void AsEngine::On_Falling_Letter(AFalling_Letter *falling_letter)
@@ -227,7 +256,10 @@ void AsEngine::On_Falling_Letter(AFalling_Letter *falling_letter)
 		Platform.Set_State(EPlatform_Substate_Regular::Normal);
 		break;
 
-		//case ELetter_Type::M: // monsters
+	case ELetter_Type::M: // monsters
+		Monster_Set.Set_Freeze_State(true);
+		Info_Panel.Monster_Indicator.Restart();
+		break;
 
 	case ELetter_Type::Plus: // life
 		if (AsInfo_Panel::Extra_Lives_Count < AsConfig::Max_Life_Count)
@@ -263,8 +295,7 @@ void AsEngine::On_Falling_Letter(AFalling_Letter *falling_letter)
 		//case ELetter_Type::N: // next level
 
 	default:
-		//AsTools::Throw();
-		;
+		AsTools::Throw();
 	}
 
 	falling_letter->Destroy();

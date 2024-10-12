@@ -11,7 +11,7 @@ AsMonster_Set::~AsMonster_Set()
 }
 //------------------------------------------------------------------------------------------------------------
 AsMonster_Set::AsMonster_Set()
-: Monster_Set_State(EMonster_Set_State::Idle), Current_Gate(0),
+: Monster_Set_State(EMonster_Set_State::Idle), Is_Frozen(false), Current_Gate(0),
   Max_Alive_Monsters_Count(0), Border(0)
 {
 }
@@ -54,6 +54,9 @@ void AsMonster_Set::Act()
 
 
 	case EMonster_Set_State::Select_Next_Gate:
+		if (Is_Frozen)
+			return;
+		
 		curr_alive_monsters_count = 0;
 		for (auto *curr_monster : Monsters)
 			if ( ! curr_monster->Is_Finished() )
@@ -123,6 +126,9 @@ void AsMonster_Set::Let_Out(int gate_index)
 	int gate_x_pos, gate_y_pos;
 	AMonster *curr_monster;
 
+	if (Is_Frozen)
+		return;
+
 	if (Monsters.size() >= AsConfig::Max_Monsters_Count)
 		return;
 
@@ -149,6 +155,14 @@ void AsMonster_Set::Destroy_All()
 		curr_monster->Destroy();
 
 	Monster_Set_State = EMonster_Set_State::Idle;
+}
+//------------------------------------------------------------------------------------------------------------
+void AsMonster_Set::Set_Freeze_State(bool is_freeze)
+{
+	Is_Frozen = is_freeze;
+
+	for (auto *curr_monster : Monsters)
+		curr_monster->Set_Freeze_State(is_freeze);
 }
 //------------------------------------------------------------------------------------------------------------
 bool AsMonster_Set::Get_Next_Obj(int &index, AGame_Object **game_obj)

@@ -27,12 +27,14 @@ public:
 	void Activate(int max_alive_monsters_count);
 	void Let_Out(int gate_index);
 	void Destroy_All();
+	void Set_Freeze_State(bool is_freeze);
 
 private:
 	virtual bool Get_Next_Obj(int &index, AGame_Object **game_obj);
 
 	EMonster_Set_State Monster_Set_State;
 
+	bool Is_Frozen;
 	int Current_Gate;
 	int Max_Alive_Monsters_Count;
 

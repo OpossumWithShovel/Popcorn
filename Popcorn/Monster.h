@@ -35,6 +35,7 @@ public:
 
 	void Let_Out(int gate_x_pos, int gate_y_pos, bool moving_right);
 	void Destroy();
+	void Set_Freeze_State(bool is_freeze);
 
 protected:
 	virtual void Act_Alive() = 0;
@@ -43,8 +44,10 @@ protected:
 
 	EMonster_State Monster_State;
 
+	bool Need_To_Freeze;
 	double X_Pos, Y_Pos;
 	double Direction;
+	double Prev_Speed;
 	int Emiting_Timer_Tick;
 	int Direction_Change_Timer_Tick;
 

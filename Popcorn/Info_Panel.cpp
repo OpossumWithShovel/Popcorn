@@ -1,75 +1,7 @@
 ﻿#include "Info_Panel.h"
 
-// AIndicator
-//-----------------------------------------------------------------------------------------------------------
-AIndicator::AIndicator(int x_pos, int y_pos)
-	: X_Pos(x_pos), Y_Pos(y_pos), Indicator_Timer_Tick(0)
-{
-	Indicator_Rect.left = X_Pos * AsConfig::Global_Scale;
-	Indicator_Rect.top = Y_Pos * AsConfig::Global_Scale;
-	Indicator_Rect.right = Indicator_Rect.left + Indicator_Width * AsConfig::Global_Scale;
-	Indicator_Rect.bottom = Indicator_Rect.top + Indicator_Height * AsConfig::Global_Scale;
-}
-//-----------------------------------------------------------------------------------------------------------
-void AIndicator::Act()
-{
-	if (! Is_Finished() )
-		AsTools::Invalidate_Rect(Indicator_Rect);
-}
-//-----------------------------------------------------------------------------------------------------------
-void AIndicator::Clear(HDC hdc, RECT &paint_area)
-{
-	//  Заглушка. Этот метод не используется
-}
-//-----------------------------------------------------------------------------------------------------------
-void AIndicator::Draw(HDC hdc, RECT &paint_area)
-{
-	int inner_x_offset = (Indicator_Width - Inner_Width) / 2;
-	int inner_y_offset = (Indicator_Height - Inner_Height) / 2;
-	int curr_height;
-	const int scale = AsConfig::Global_Scale;
-	double ratio;
-	RECT rect;
-
-	AsTools::Rect(hdc, X_Pos, Y_Pos, Indicator_Width, Indicator_Height, AsConfig::Floor_Indicator_Color);
-
-	if (Indicator_Timer_Tick == 0 || Is_Finished() )
-		return;
-
-	ratio = (double)(Indicator_Timer_Tick - AsConfig::Current_Timer_Tick) / (double)Indicator_Timeout;
-
-	curr_height = (int)( (double)(Inner_Height * scale) * ratio);
-
-	if (curr_height == 0)
-		return;
-
-	rect.left = (X_Pos + inner_x_offset) * scale;
-	rect.top = (Y_Pos + inner_y_offset) * scale + (Inner_Height * scale - curr_height);
-	rect.right = rect.left + Inner_Width * scale;
-	rect.bottom = (Y_Pos + inner_y_offset + Inner_Height) * scale;
-
-	AsTools::Rect(hdc, rect, AsConfig::White_Color);
-}
-//-----------------------------------------------------------------------------------------------------------
-bool AIndicator::Is_Finished()
-{
-	if (AsConfig::Current_Timer_Tick > Indicator_Timer_Tick)
-		return true;
-	else
-		return false;
-}
-//-----------------------------------------------------------------------------------------------------------
-void AIndicator::Restart()
-{
-	Indicator_Timer_Tick = AsConfig::Current_Timer_Tick + Indicator_Timeout;
-}
-//-----------------------------------------------------------------------------------------------------------
-
-
-
-
 // AsInfo_Panel
-int AsInfo_Panel::Score = 1234;
+int AsInfo_Panel::Score = 0;
 int AsInfo_Panel::Extra_Lives_Count = 5;
 RECT AsInfo_Panel::Score_Rect{};
 //-----------------------------------------------------------------------------------------------------------
@@ -93,7 +25,8 @@ AsInfo_Panel::AsInfo_Panel()
 	Letter_F(EBrick_Type::Blue, ELetter_Type::F, 216, 155),
 	Letter_M(EBrick_Type::Blue, ELetter_Type::M, 296, 155),
 	Letter_Plus(EBrick_Type::Blue, ELetter_Type::Plus, 256, 155), Player_Name(L"COMPUTER"),
-	Floor_Indicator(Indicators_Panel_X_Pos + 9, Indicators_Panel_Y_Pos + 56), Monster_Indicator(Indicators_Panel_X_Pos + 89, Indicators_Panel_Y_Pos + 56)
+	Floor_Indicator(EMessage_Type::Floor_Is_Ends, Indicators_Panel_X_Pos + 9, Indicators_Panel_Y_Pos + 56),
+	Monster_Indicator(EMessage_Type::Unfreeze_Monster, Indicators_Panel_X_Pos + 89, Indicators_Panel_Y_Pos + 56)
 {
 	const int scale = AsConfig::Global_Scale;
 

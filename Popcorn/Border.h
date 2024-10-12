@@ -34,6 +34,8 @@ private:
 	void Draw_Bounds(HDC hdc, RECT &paint_area) const;
 	void Draw_Floor(HDC hdc, RECT &paint_area) const;
 
+	bool Clear_Floor;
+
 	std::vector<AGate *> Gates;
 
 	RECT Floor_Rect;

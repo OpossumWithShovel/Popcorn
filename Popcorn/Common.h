@@ -6,6 +6,7 @@
 #include <math.h>
 #include <string>
 #include <vector>
+#include <queue>
 
 //------------------------------------------------------------------------------------------------------------
 enum class EBall_State: unsigned char
@@ -95,5 +96,29 @@ public:
 
 private:
 	std::wstring Content;
+};
+//------------------------------------------------------------------------------------------------------------
+enum class EMessage_Type: unsigned char
+{
+	Floor_Is_Ends,
+	Unfreeze_Monster
+};
+//------------------------------------------------------------------------------------------------------------
+class AMessage
+{
+public:
+	AMessage(EMessage_Type message_type);
+	
+	const EMessage_Type Type;
+};
+//------------------------------------------------------------------------------------------------------------
+class AsMessage_Manager
+{
+public:
+	static void Add_Message(AMessage *message);
+	static bool Get_Message(AMessage **message);
+
+private:
+	static std::queue<AMessage *> Message_Queue;
 };
 //------------------------------------------------------------------------------------------------------------
