@@ -32,8 +32,6 @@ class AsConfig
 public:
 	static bool Level_Has_Floor;
 	static int Current_Timer_Tick;
-	static int Score;
-	static int Extra_Lives_Count;
 	static const AColor BG_Color, Red_Color, Blue_Color, White_Color, Symbol_Color;
 	static const AColor Teleport_Color, Red_Highlight, Blue_Highlight, Laser_Color;
 	static const AColor Gate_Highlight_Color, Monster_Comet_Tail;

@@ -379,6 +379,8 @@ bool AsLevel::On_Hit(int brick_y, int brick_x, ABall_Object *ball, bool vertical
 
 	Redraw_Brick(brick_y, brick_x);
 
+	AsInfo_Panel::Update_Score(EScore_Event_Type::Hit_Brick);
+
 	return can_reflect;
 }
 //------------------------------------------------------------------------------------------------------------
@@ -396,6 +398,8 @@ void AsLevel::On_Hit(int level_y, int level_x)
 		Create_Active_Brick(level_y, level_x, brick_type, 0, 0);
 
 	Redraw_Brick(level_y, level_x);
+
+	AsInfo_Panel::Update_Score(EScore_Event_Type::Hit_Brick);
 }
 //------------------------------------------------------------------------------------------------------------
 bool AsLevel::Create_Active_Brick(int brick_y, int brick_x, EBrick_Type brick_type, ABall_Object *ball, bool vertical_hit)

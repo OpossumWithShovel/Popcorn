@@ -51,11 +51,11 @@ void AsEngine::Init_Engine(HWND hwnd)
 
 	Modules.push_back(&Level);
 	Modules.push_back(&Border);
-	Modules.push_back(&Platform);
 	Modules.push_back(&Ball_Set);
 	Modules.push_back(&Laser_Beam_Set);
 	Modules.push_back(&Monster_Set);
 	Modules.push_back(&Info_Panel);
+	Modules.push_back(&Platform);
 }
 //------------------------------------------------------------------------------------------------------------
 void AsEngine::Draw_Frame(HDC hdc, RECT &paint_area)
@@ -230,8 +230,8 @@ void AsEngine::On_Falling_Letter(AFalling_Letter *falling_letter)
 		//case ELetter_Type::M: // monsters
 
 	case ELetter_Type::Plus: // life
-		if (AsConfig::Extra_Lives_Count < AsConfig::Max_Life_Count)
-			++AsConfig::Extra_Lives_Count;
+		if (AsInfo_Panel::Extra_Lives_Count < AsConfig::Max_Life_Count)
+			++AsInfo_Panel::Extra_Lives_Count;
 
 		Platform.Set_State(EPlatform_Substate_Regular::Normal);
 		break;
@@ -246,6 +246,7 @@ void AsEngine::On_Falling_Letter(AFalling_Letter *falling_letter)
 
 	case ELetter_Type::F: // floor
 		AsConfig::Level_Has_Floor = true;
+		Info_Panel.Floor_Indicator.Restart();
 		Platform.Set_State(EPlatform_Substate_Regular::Normal);
 		Border.Redraw_Floor();
 		break;
@@ -267,5 +268,7 @@ void AsEngine::On_Falling_Letter(AFalling_Letter *falling_letter)
 	}
 
 	falling_letter->Destroy();
+
+	AsInfo_Panel::Update_Score(EScore_Event_Type::Catch_Letter);
 }
 //------------------------------------------------------------------------------------------------------------
