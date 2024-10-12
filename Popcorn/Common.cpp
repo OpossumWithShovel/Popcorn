@@ -24,66 +24,6 @@ AGraphics_Object::~AGraphics_Object()
 
 
 
-// AColor
-//------------------------------------------------------------------------------------------------------------
-AColor::~AColor()
-{
-	if (Pen != 0)
-		DeleteObject(Pen);
-	if (Brush != 0)
-		DeleteObject(Brush);
-}
-//------------------------------------------------------------------------------------------------------------
-AColor::AColor()
-	: R(0), G(0), B(0), Pen(0), Brush(0)
-{
-}
-//------------------------------------------------------------------------------------------------------------
-AColor::AColor(unsigned char r, unsigned char g, unsigned char b)
-	: R(r), G(g), B(b), Pen(0), Brush(0)
-{
-	Pen = CreatePen(PS_SOLID, 0, RGB(R, G, B) );
-	Brush = CreateSolidBrush(RGB(R, G, B) );
-}
-//------------------------------------------------------------------------------------------------------------
-AColor::AColor(const AColor &color, int pen_tickness)
-	: R(color.R), G(color.G), B(color.B), Pen(0), Brush(0)
-{
-	Pen = CreatePen(PS_SOLID, pen_tickness, color.Get_RGB() );
-}
-//------------------------------------------------------------------------------------------------------------
-AColor::AColor(const AColor &pen_color, const AColor &brush_color, int pen_tickness)
-	: R(0), G(0), B(0), Pen(0), Brush(0)
-{
-	Pen = CreatePen(PS_SOLID, pen_tickness, pen_color.Get_RGB() );
-	Brush = CreateSolidBrush(brush_color.Get_RGB() );
-}
-//------------------------------------------------------------------------------------------------------------
-int AColor::Get_RGB() const
-{
-	return RGB(R, G, B);
-}
-//------------------------------------------------------------------------------------------------------------
-HBRUSH AColor::Get_Brush() const
-{
-	return Brush;
-}
-//------------------------------------------------------------------------------------------------------------
-void AColor::Select(HDC hdc) const
-{
-	SelectObject(hdc, Pen);
-	SelectObject(hdc, Brush);
-}
-//------------------------------------------------------------------------------------------------------------
-void AColor::Select_Pen(HDC hdc) const
-{
-	SelectObject(hdc, Pen);
-}
-//------------------------------------------------------------------------------------------------------------
-
-
-
-
 // AGame_Objects_Set
 //------------------------------------------------------------------------------------------------------------
 void AGame_Objects_Set::Begin_Movement()

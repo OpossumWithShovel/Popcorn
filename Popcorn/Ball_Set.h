@@ -6,6 +6,8 @@
 class AsBall_Set: public AGame_Objects_Set
 {
 public:
+	AsBall_Set();
+
 	virtual void Act();
 
 	void Set_On_Platform(double platform_x_pos);
@@ -23,6 +25,6 @@ public:
 private:
 	virtual bool Get_Next_Obj(int &index, AGame_Object **game_obj);
 
-	ABall Balls[AsConfig::Max_Balls_Count];
+	std::vector<ABall> Balls;
 };
 //-----------------------------------------------------------------------------------------------------------

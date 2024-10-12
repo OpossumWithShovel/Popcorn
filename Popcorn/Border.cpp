@@ -4,10 +4,10 @@
 //------------------------------------------------------------------------------------------------------------
 AsBorder::~AsBorder()
 {
-	int i;
+	for (auto *gate : Gates)
+		delete gate;
 
-	for (i = 0; i < AsConfig::Gates_Count; i++)
-		delete Gates[i];
+	Gates.erase(Gates.begin(), Gates.end() );
 }
 //------------------------------------------------------------------------------------------------------------
 AsBorder::AsBorder()
@@ -18,17 +18,20 @@ AsBorder::AsBorder()
 	Floor_Rect.right = AsConfig::Level_Max_X_Offset * AsConfig::Global_Scale;
 	Floor_Rect.bottom = AsConfig::Play_Area_Max_Y_Offset * AsConfig::Global_Scale;
 
-	Gates[0] = new AGate(2, 29, 0, 3);
-	Gates[1] = new AGate(AsConfig::Level_Max_X_Offset, 29, AsConfig::Level_Width - 1, 3);
+	Gates.push_back(new AGate(2, 29, 0, 3) );
+	Gates.push_back(new AGate(AsConfig::Level_Max_X_Offset, 29, AsConfig::Level_Width - 1, 3) );
 
-	Gates[2] = new AGate(2, 77, 0, 9);
-	Gates[3] = new AGate(AsConfig::Level_Max_X_Offset, 77, AsConfig::Level_Width - 1, 9);
+	Gates.push_back(new AGate(2, 77, 0, 9) );
+	Gates.push_back(new AGate(AsConfig::Level_Max_X_Offset, 77, AsConfig::Level_Width - 1, 9) );
 
-	Gates[4] = new AGate(2, 129);
-	Gates[5] = new AGate(AsConfig::Level_Max_X_Offset, 129);
+	Gates.push_back(new AGate(2, 129) );
+	Gates.push_back(new AGate(AsConfig::Level_Max_X_Offset, 129) );
 
-	Gates[6] = new AGate(2, 178);
-	Gates[7] = new AGate(AsConfig::Level_Max_X_Offset, 178);
+	Gates.push_back(new AGate(2, 178) );
+	Gates.push_back(new AGate(AsConfig::Level_Max_X_Offset, 178) );
+
+	if (Gates.size() != AsConfig::Gates_Count)
+		AsTools::Throw();
 }
 //------------------------------------------------------------------------------------------------------------
 bool AsBorder::Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *ball)
@@ -83,19 +86,16 @@ double AsBorder::Get_Speed()
 //------------------------------------------------------------------------------------------------------------
 void AsBorder::Act()
 {
-	int i;
-
-	for (i = 0; i < AsConfig::Gates_Count; i++)
-		Gates[i]->Act();
+	for (auto *gate : Gates)
+		gate->Act();
 }
 //------------------------------------------------------------------------------------------------------------
 void AsBorder::Clear(HDC hdc, RECT &paint_area)
 {
-	int i;
 	RECT intersection_rect;
 
-	for (i = 0; i < AsConfig::Gates_Count; i++)
-		Gates[i]->Clear(hdc, paint_area);
+	for (auto *gate : Gates)
+		gate->Clear(hdc, paint_area);
 
 	if (AsConfig::Level_Has_Floor)
 		return;
@@ -108,15 +108,13 @@ void AsBorder::Clear(HDC hdc, RECT &paint_area)
 //------------------------------------------------------------------------------------------------------------
 void AsBorder::Draw(HDC hdc, RECT &paint_area)
 {
-	int i;
-
 	Draw_Bounds(hdc, paint_area);
 
 	if (AsConfig::Level_Has_Floor)
 		Draw_Floor(hdc, paint_area);
 
-	for (i = 0; i < AsConfig::Gates_Count; i++)
-		Gates[i]->Draw(hdc, paint_area);
+	for (auto *gate : Gates)
+		gate->Draw(hdc, paint_area);
 }
 //------------------------------------------------------------------------------------------------------------
 bool AsBorder::Is_Finished()
@@ -131,16 +129,13 @@ void AsBorder::Redraw_Floor()
 //------------------------------------------------------------------------------------------------------------
 void AsBorder::Open_Gate(int gate_index, bool is_short_open)
 {
-	if (gate_index < 0 || gate_index >= AsConfig::Gates_Count)
-	{
-		AsTools::Throw();
-		return;
-	}
-
-	if (gate_index != AsConfig::Gates_Count - 1 && is_short_open == true)
+	if (gate_index != (int)Gates.size() - 1 && is_short_open)
 		AsTools::Throw();
 
-	Gates[gate_index]->Open_Gate(is_short_open);
+	if (gate_index >= 0 || gate_index < (int)Gates.size() )
+		Gates[gate_index]->Open_Gate(is_short_open);
+	else
+		AsTools::Throw();
 }
 //------------------------------------------------------------------------------------------------------------
 int AsBorder::Long_Open_Gate()
@@ -151,13 +146,13 @@ int AsBorder::Long_Open_Gate()
 	AGate *curr_gate;
 	RECT monster_rect;
 
-	gate_index = AsTools::Rand(AsConfig::Gates_Count - 1);
+	gate_index = AsTools::Rand(Gates.size() );
 
-	for (i = 0; i < AsConfig::Gates_Count; i++)
+	for (i = 0; i < (int)Gates.size(); i++)
 	{
 		curr_gate = Gates[gate_index];
 
-		if (gate_index != AsConfig::Gates_Count - 1)
+		if (gate_index != Gates.size() - 1)
 			if (Is_Gate_Close(gate_index) )
 			{			
 				if (curr_gate->Level_X == -1 || curr_gate->Level_Y == -1)
@@ -179,7 +174,7 @@ int AsBorder::Long_Open_Gate()
 
 		++gate_index;
 
-		if (gate_index >= AsConfig::Gates_Count)
+		if (gate_index >= (int)Gates.size() )
 			gate_index = 0;
 	}
 
@@ -193,18 +188,18 @@ int AsBorder::Long_Open_Gate()
 //------------------------------------------------------------------------------------------------------------
 bool AsBorder::Is_Gate_Open(int gate_index)
 {
-	if (gate_index < 0 || gate_index >= AsConfig::Gates_Count)
+	if (gate_index >= 0 && gate_index < (int)Gates.size() )
+		return Gates[gate_index]->Is_Gate_Open();
+	else
 	{
 		AsTools::Throw();
 		return false;
 	}
-
-	return Gates[gate_index]->Is_Gate_Open();
 }
 //------------------------------------------------------------------------------------------------------------
 bool AsBorder::Is_Gate_Close(int gate_index)
 {
-	if (gate_index < 0 || gate_index >= AsConfig::Gates_Count)
+	if (gate_index < 0 || gate_index >= (int)Gates.size() )
 	{
 		AsTools::Throw();
 		return false;
@@ -220,7 +215,6 @@ void AsBorder::Get_Gate_Pos(int gate_index, int &gate_x_pos, int &gate_y_pos)
 //------------------------------------------------------------------------------------------------------------
 void AsBorder::Draw_Tile(HDC hdc, RECT &paint_area, int x, int y, bool is_top) const
 {
-	int i;
 	int gate_top_y, gate_low_y;
 	RECT intersection_rect, tile_rect{};
 
@@ -234,9 +228,9 @@ void AsBorder::Draw_Tile(HDC hdc, RECT &paint_area, int x, int y, bool is_top) c
 
 	if (! is_top)
 	{
-		for (i = 0; i < AsConfig::Gates_Count; i++)
+		for (auto *gate : Gates)
 		{
-			Gates[i]->Get_Y_Area(gate_top_y, gate_low_y);
+			gate->Get_Y_Area(gate_top_y, gate_low_y);
 
 			if (gate_top_y <= tile_rect.top && gate_low_y >= tile_rect.bottom)
 				return;

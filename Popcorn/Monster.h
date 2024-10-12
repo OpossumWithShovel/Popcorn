@@ -59,9 +59,9 @@ private:
 	void Redraw_Monster();
 	void Change_Direction();
 
-	static const int Max_Explosive_Balls_Count = 20;
+	std::vector<AExplosive_Ball> Explosive_Balls;
 
-	AExplosive_Ball Explosive_Balls[Max_Explosive_Balls_Count];
+	static const int Max_Explosive_Balls_Count = 20;
 };
 //------------------------------------------------------------------------------------------------------------
 enum class EEye_State: unsigned char
@@ -90,13 +90,15 @@ private:
 
 	EEye_State Eye_State;
 
-	static const int Blinks_Stages_Count = 7;
-	int Blink_Ticks[Blinks_Stages_Count];
+	std::vector<int> Blink_Ticks;
 
 	static const double Max_Cornea_Height;
 
+	static const int Blinks_Stages_Count = 7;
+
 	static const double Blink_Timeouts[Blinks_Stages_Count];
 	static const EEye_State Blink_States[Blinks_Stages_Count];
+
 };
 //------------------------------------------------------------------------------------------------------------
 class AMonster_Comet: public AMonster

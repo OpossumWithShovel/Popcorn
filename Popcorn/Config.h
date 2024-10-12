@@ -3,6 +3,30 @@
 #include "Common.h"
 
 //------------------------------------------------------------------------------------------------------------
+class AColor
+{
+public:
+	~AColor();
+	AColor();
+	AColor(unsigned char r, unsigned char g, unsigned char b);
+	AColor(const AColor &color, int pen_tickness);
+	AColor(const AColor &pen_color, const AColor &brush_color, int pen_tickness);
+
+	void operator = (const AColor &another);
+	void Set_As(unsigned char r, unsigned char g, unsigned char b);
+
+	int Get_RGB() const;
+	HBRUSH Get_Brush() const;
+	void Select(HDC hdc) const;
+	void Select_Pen(HDC hdc) const;
+
+	unsigned char R, G, B;
+
+private:
+	HPEN Pen;
+	HBRUSH Brush;
+};
+//------------------------------------------------------------------------------------------------------------
 class AsConfig
 {
 public:
@@ -76,7 +100,7 @@ public:
 	static void Ellipse_Outline(HDC hdc, RECT &rect, const AColor &color);
 	static void Invalidate_Rect(RECT &rect);
 	static unsigned char Get_Fading_Channel(unsigned char channel, unsigned char bg_channel, int step, int steps_count);
-	static void Get_Fading_Color(const AColor &origin_color, int step, AColor &modified_color, int steps_count);
+	static void Get_Fading_Color(const AColor &origin_color, int step, AColor &result_color, int max_step);
 	static bool Reflect_From_Circle(double next_x_pos, double next_y_pos, double circle_radius, double circle_x, double circle_y, ABall_Object *ball);
 
 	static void Throw();
@@ -103,7 +127,6 @@ public:
 	bool Check_Hit(RECT &rect);
 
 private:
-	int Hit_Checkers_Count;
-	AHit_Checker *Hit_Checkers[4];
+	std::vector<AHit_Checker *> Hit_Checkers;
 };
 //------------------------------------------------------------------------------------------------------------

@@ -1,5 +1,86 @@
 ﻿#include "Config.h"
 
+// AColor
+//------------------------------------------------------------------------------------------------------------
+AColor::~AColor()
+{
+	if (Pen != 0)
+		DeleteObject(Pen);
+	if (Brush != 0)
+		DeleteObject(Brush);
+}
+//------------------------------------------------------------------------------------------------------------
+AColor::AColor()
+	: R(0), G(0), B(0), Pen(0), Brush(0)
+{
+}
+//------------------------------------------------------------------------------------------------------------
+AColor::AColor(unsigned char r, unsigned char g, unsigned char b)
+	: R(r), G(g), B(b), Pen(0), Brush(0)
+{
+	Pen = CreatePen(PS_SOLID, 0, RGB(R, G, B) );
+	Brush = CreateSolidBrush(RGB(R, G, B) );
+}
+//------------------------------------------------------------------------------------------------------------
+AColor::AColor(const AColor &color, int pen_tickness)
+	: R(color.R), G(color.G), B(color.B), Pen(0), Brush(0)
+{
+	Pen = CreatePen(PS_SOLID, pen_tickness, color.Get_RGB() );
+}
+//------------------------------------------------------------------------------------------------------------
+AColor::AColor(const AColor &pen_color, const AColor &brush_color, int pen_tickness)
+	: R(0), G(0), B(0), Pen(0), Brush(0)
+{
+	Pen = CreatePen(PS_SOLID, pen_tickness, pen_color.Get_RGB() );
+	Brush = CreateSolidBrush(brush_color.Get_RGB() );
+}
+//------------------------------------------------------------------------------------------------------------
+void AColor::operator = (const AColor &another)
+{
+	AsTools::Throw();  // При присваивании нужно создать копии карандаша и кисти. Вместо этого следует их пересоздать методом Set_As().
+}
+//------------------------------------------------------------------------------------------------------------
+void AColor::Set_As(unsigned char r, unsigned char g, unsigned char b)
+{
+	R = r;
+	G = g;
+	B = b;
+
+	if (Pen != 0)
+		DeleteObject(Pen);
+
+	if (Brush != 0)
+		DeleteObject(Brush);
+
+	Pen = CreatePen(PS_SOLID, 0, RGB(R, G, B) );
+	Brush = CreateSolidBrush(RGB(R, G, B) );
+}
+//------------------------------------------------------------------------------------------------------------
+int AColor::Get_RGB() const
+{
+	return RGB(R, G, B);
+}
+//------------------------------------------------------------------------------------------------------------
+HBRUSH AColor::Get_Brush() const
+{
+	return Brush;
+}
+//------------------------------------------------------------------------------------------------------------
+void AColor::Select(HDC hdc) const
+{
+	SelectObject(hdc, Pen);
+	SelectObject(hdc, Brush);
+}
+//------------------------------------------------------------------------------------------------------------
+void AColor::Select_Pen(HDC hdc) const
+{
+	SelectObject(hdc, Pen);
+}
+//------------------------------------------------------------------------------------------------------------
+
+
+
+
 // AsConfig
 //------------------------------------------------------------------------------------------------------------
 bool AsConfig::Level_Has_Floor = true;
@@ -100,20 +181,20 @@ void AsTools::Invalidate_Rect(RECT &rect)
 	InvalidateRect(AsConfig::Hwnd, &rect, FALSE);
 }
 //------------------------------------------------------------------------------------------------------------
-unsigned char AsTools::Get_Fading_Channel(unsigned char channel, unsigned char bg_channel, int step, int steps_count)
+unsigned char AsTools::Get_Fading_Channel(unsigned char color, unsigned char bg_color, int step, int max_step)
 {
-	return channel - step * (channel - bg_channel) / (steps_count - 1);
+	return color - step * (color - bg_color) / (max_step - 1);
 }
 //------------------------------------------------------------------------------------------------------------
-void AsTools::Get_Fading_Color(const AColor &origin_color, int step, AColor &modified_color, int steps_count)
+void AsTools::Get_Fading_Color(const AColor &origin_color, int step, AColor &result_color, int max_step)
 {
 	unsigned char r, g, b;
 
-	r = Get_Fading_Channel(origin_color.R, AsConfig::BG_Color.R, step, steps_count);
-	g = Get_Fading_Channel(origin_color.G, AsConfig::BG_Color.G, step, steps_count);
-	b = Get_Fading_Channel(origin_color.B, AsConfig::BG_Color.B, step, steps_count);
+	r = Get_Fading_Channel(origin_color.R, AsConfig::BG_Color.R, step, max_step);
+	g = Get_Fading_Channel(origin_color.G, AsConfig::BG_Color.G, step, max_step);
+	b = Get_Fading_Channel(origin_color.B, AsConfig::BG_Color.B, step, max_step);
 
-	modified_color = AColor(r, g, b);
+	result_color.Set_As(r, g, b);
 }
 //------------------------------------------------------------------------------------------------------------
 bool AsTools::Reflect_From_Circle(double next_x_pos, double next_y_pos, double circle_radius, double circle_x, double circle_y, ABall_Object *ball)
@@ -202,26 +283,17 @@ bool AHit_Checker::Hit_Circle_On_Line(double distance_to_line, double ball_cente
 // AHit_Checker_List
 //------------------------------------------------------------------------------------------------------------
 AHit_Checker_List::AHit_Checker_List()
-	: 	Hit_Checkers_Count(0), Hit_Checkers{}
 {}
 //------------------------------------------------------------------------------------------------------------
 void AHit_Checker_List::Add_Hit_Checker(AHit_Checker *hit_checker)
 {
-	if (Hit_Checkers_Count >= sizeof(Hit_Checkers) / sizeof(Hit_Checkers[0]) )
-	{
-		AsTools::Throw();
-		return;
-	}
-
-	Hit_Checkers[Hit_Checkers_Count++] = hit_checker;
+	Hit_Checkers.push_back(hit_checker);
 }
 //------------------------------------------------------------------------------------------------------------
 bool AHit_Checker_List::Check_Hit(double x_pos, double y_pos)
 {
-	int i;
-
-	for (i = 0; i < Hit_Checkers_Count; i++)
-		if (Hit_Checkers[i]->Check_Hit(x_pos, y_pos) )
+	for (auto *hit_checker : Hit_Checkers)
+		if (hit_checker->Check_Hit(x_pos, y_pos) )
 			return true;
 
 	return false;
@@ -229,10 +301,8 @@ bool AHit_Checker_List::Check_Hit(double x_pos, double y_pos)
 //------------------------------------------------------------------------------------------------------------
 bool AHit_Checker_List::Check_Hit(double x_pos, double y_pos, ABall_Object *ball)
 {
-	int i;
-
-	for (i = 0; i < Hit_Checkers_Count; i++)
-		if (Hit_Checkers[i]->Check_Hit(x_pos, y_pos, ball) )
+	for (auto *hit_checker : Hit_Checkers)
+		if (hit_checker->Check_Hit(x_pos, y_pos, ball) )
 			return true;
 
 	return false;
@@ -240,10 +310,8 @@ bool AHit_Checker_List::Check_Hit(double x_pos, double y_pos, ABall_Object *ball
 //------------------------------------------------------------------------------------------------------------
 bool AHit_Checker_List::Check_Hit(RECT &rect)
 {
-	int i;
-
-	for (i = 0; i < Hit_Checkers_Count; i++)
-		if (Hit_Checkers[i]->Check_Hit(rect) )
+	for (auto *hit_checker : Hit_Checkers)
+		if (hit_checker->Check_Hit(rect) )
 			return true;
 
 	return false;

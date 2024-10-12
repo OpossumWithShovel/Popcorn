@@ -725,7 +725,9 @@ void AsLevel::Redraw_Brick(int brick_y, int brick_x)
 //------------------------------------------------------------------------------------------------------------
 void AsLevel::Act_Object(std::vector<AGraphics_Object *> &graphics_object)
 {
-	for (auto it = graphics_object.begin(); it != graphics_object.end(); it++)
+	auto it = graphics_object.begin();
+
+	while (it != graphics_object.end() )
 	{
 		(*it)->Act();
 
@@ -734,6 +736,8 @@ void AsLevel::Act_Object(std::vector<AGraphics_Object *> &graphics_object)
 			delete *it;
 			it = graphics_object.erase(it);
 		}
+		else
+			it++;
 	}
 }
 //------------------------------------------------------------------------------------------------------------

@@ -8,13 +8,13 @@ enum class EMonster_Set_State: unsigned char
 	Idle,
 	Select_Next_Gate,
 	Waitinig_For_Open_Gate,
-	Waitinig_For_Close_Gate,
-	//Waiting_For_Destroy_All
+	Waitinig_For_Close_Gate
 };
 //------------------------------------------------------------------------------------------------------------
 class AsMonsters_Set: public AHit_Checker, public AGame_Objects_Set
 {
 public:
+	~AsMonsters_Set();
 	AsMonsters_Set();
 
 	virtual bool Check_Hit(double next_x_pos, double next_y_pos, ABall_Object *ball);
@@ -38,6 +38,6 @@ private:
 
 	AsBorder *Border;  // UNO
 
-	AMonster *Monsters[AsConfig::Max_Monsters_Count];
+	std::vector<AMonster *> Monsters;
 };
 //------------------------------------------------------------------------------------------------------------
