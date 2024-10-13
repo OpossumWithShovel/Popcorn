@@ -28,12 +28,12 @@ public:
 	virtual bool Is_Finished();
 
 	void Init();
+	void Increase_Life_Count();
+	bool Decrease_Life_Count();
 
 	static void Update_Score(EScore_Event_Type event_type);
 
 	AIndicator Floor_Indicator, Monster_Indicator;
-
-	static int Extra_Lives_Count;
 
 private:
 	void Choose_Font();
@@ -47,18 +47,18 @@ private:
 	void Draw_Rect_With_Shadow(HDC hdc, RECT &panel_rect, const AColor &panel_color);
 	void Get_Shadow_Rect(RECT &src_rect, RECT &dst_rect, int distance_to_shadow);
 
+	int Extra_Lives_Count;
+
 	AColor *Shadow_Color, *Highlight_Color;
 	AFalling_Letter Letter_F, Letter_M, Letter_Plus;
 
-	static int Score;
-
 	RECT Logo_Rect;
 	RECT Indicators_Panel_Rect, Name_Rect;
-	static RECT Score_Rect;
-
 	AString Player_Name;
-
 	HFONT Logo_Pop_Font, Logo_Corn_Font, Player_Name_Font; 
+
+	static int Score;
+	static RECT Score_Rect;
 
 	static const int Shadow_X_Offset = 5 * AsConfig::Global_Scale;
 	static const int Shadow_Y_Offset = 5 * AsConfig::Global_Scale;

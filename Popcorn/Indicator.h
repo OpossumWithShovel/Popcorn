@@ -14,6 +14,7 @@ public:
 	virtual bool Is_Finished();
 
 	void Restart();
+	void Cancel();
 	void Reset();
 
 private:
@@ -29,6 +30,6 @@ private:
 	static const int Indicator_Height = 30;
 	static const int Inner_Width = Indicator_Width - 2;
 	static const int Inner_Height = Indicator_Height - 2;
-	static const int Indicator_Timeout = 5 * AsConfig::FPS;
+	static const int Indicator_Timeout = 50 * AsConfig::FPS;
 };
 //-----------------------------------------------------------------------------------------------------------

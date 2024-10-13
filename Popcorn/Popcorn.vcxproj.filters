@@ -100,6 +100,9 @@
     <Filter Include="#Laser_Beam\Laser_Beam_Set">
       <UniqueIdentifier>{9f0713cd-d7a9-4ebc-942e-dd888236500d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="#Screen\Level_Data">
+      <UniqueIdentifier>{2f176017-cf69-41a0-8b8a-a14bf712a1d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -176,6 +179,12 @@
     </ClInclude>
     <ClInclude Include="Info_Panel.h">
       <Filter>#Screen\Info_Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="Indicator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Level_Data.h">
+      <Filter>#Screen\Level_Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -257,6 +266,12 @@
     </ClCompile>
     <ClCompile Include="Info_Panel.cpp">
       <Filter>#Screen\Info_Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Indicator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Level_Data.cpp">
+      <Filter>#Screen\Level_Data</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -2,7 +2,6 @@
 
 // AsInfo_Panel
 int AsInfo_Panel::Score = 0;
-int AsInfo_Panel::Extra_Lives_Count = 5;
 RECT AsInfo_Panel::Score_Rect{};
 //-----------------------------------------------------------------------------------------------------------
 AsInfo_Panel::~AsInfo_Panel()
@@ -21,12 +20,12 @@ AsInfo_Panel::~AsInfo_Panel()
 }
 //-----------------------------------------------------------------------------------------------------------
 AsInfo_Panel::AsInfo_Panel()
-	: Shadow_Color(0), Highlight_Color(0), Logo_Pop_Font(0), Logo_Corn_Font(0), Player_Name_Font(0),
-	Letter_F(EBrick_Type::Blue, ELetter_Type::F, 216, 155),
-	Letter_M(EBrick_Type::Blue, ELetter_Type::M, 296, 155),
-	Letter_Plus(EBrick_Type::Blue, ELetter_Type::Plus, 256, 155), Player_Name(L"COMPUTER"),
-	Floor_Indicator(EMessage_Type::Floor_Is_Ends, Indicators_Panel_X_Pos + 9, Indicators_Panel_Y_Pos + 56),
-	Monster_Indicator(EMessage_Type::Unfreeze_Monster, Indicators_Panel_X_Pos + 89, Indicators_Panel_Y_Pos + 56)
+: Extra_Lives_Count(AsConfig::Initial_Life_Count), Shadow_Color(0), Highlight_Color(0), Logo_Pop_Font(0), Logo_Corn_Font(0), Player_Name_Font(0),
+  Letter_F(EBrick_Type::Blue, ELetter_Type::F, 216, 155),
+  Letter_M(EBrick_Type::Blue, ELetter_Type::M, 296, 155),
+  Letter_Plus(EBrick_Type::Blue, ELetter_Type::Plus, 256, 155), Player_Name(L"COMPUTER"),
+  Floor_Indicator(EMessage_Type::Floor_Is_Ends, Indicators_Panel_X_Pos + 9, Indicators_Panel_Y_Pos + 56),
+  Monster_Indicator(EMessage_Type::Unfreeze_Monster, Indicators_Panel_X_Pos + 89, Indicators_Panel_Y_Pos + 56)
 {
 	const int scale = AsConfig::Global_Scale;
 
@@ -144,6 +143,26 @@ void AsInfo_Panel::Init()
 
 	Shadow_Color = new AColor(AsConfig::BG_Color, AsConfig::Global_Scale);
 	Highlight_Color = new AColor(AsConfig::White_Color, AsConfig::Global_Scale);
+}
+//-----------------------------------------------------------------------------------------------------------
+void AsInfo_Panel::Increase_Life_Count()
+{
+	if (Extra_Lives_Count < AsConfig::Max_Life_Count)
+	{
+		++Extra_Lives_Count;
+		AsTools::Invalidate_Rect(Indicators_Panel_Rect);
+	}
+}
+//-----------------------------------------------------------------------------------------------------------
+bool AsInfo_Panel::Decrease_Life_Count()
+{
+	if (Extra_Lives_Count == 0)
+		return false;
+
+	--Extra_Lives_Count;
+	AsTools::Invalidate_Rect(Indicators_Panel_Rect);
+	
+	return true;
 }
 //-----------------------------------------------------------------------------------------------------------
 void AsInfo_Panel::Update_Score(EScore_Event_Type event_type)

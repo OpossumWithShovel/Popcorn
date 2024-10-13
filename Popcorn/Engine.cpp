@@ -40,7 +40,7 @@ void AsEngine::Init_Engine(HWND hwnd)
 
 	AsPlatform::Hit_Checker_List.Add_Hit_Checker(&Monster_Set);
 
-	Level.Set_Current_Level(AsLevel::Test_Level);
+	Level.Set_Current_Level(3);
 
 	//Ball.Set_State(EBall_State::On_Platform, (double)(Platform.X_Pos + Platform.Width / 2) );
 	//Platform.Set_State(EPlatform_State::Laser);
@@ -110,7 +110,8 @@ int AsEngine::On_Timer()
 
 	case EGame_State::Lost_Ball:
 		if (Platform.Has_State(EPlatform_Substate_Regular::Missing) )
-			Restart_Level();
+			if (Restart_Level() )
+				Game_Over();
 		break;
 
 
@@ -131,10 +132,14 @@ int AsEngine::On_Timer()
 	return 0;
 }
 //------------------------------------------------------------------------------------------------------------
-void AsEngine::Restart_Level()
+bool AsEngine::Restart_Level()
 {
+	if (! Info_Panel.Decrease_Life_Count() )
+		return false;
+
 	Game_State = EGame_State::Restart_Level;
 	Border.Open_Gate(7, true);
+	return true;
 }
 //------------------------------------------------------------------------------------------------------------
 void AsEngine::Play_Level()
@@ -156,6 +161,11 @@ void AsEngine::Play_Level()
 
 	if (Ball_Set.Is_Test_Finished() )
 		Game_State = EGame_State::Test_Ball;
+}
+//------------------------------------------------------------------------------------------------------------
+void AsEngine::Game_Over()
+{
+	// !!! Надо сделать
 }
 //------------------------------------------------------------------------------------------------------------
 void AsEngine::Advance_Movers()
@@ -243,6 +253,8 @@ void AsEngine::On_Falling_Letter(AFalling_Letter *falling_letter)
 	switch (falling_letter->Letter_Type)
 	{
 	case ELetter_Type::C: // cansel action of letters
+		Info_Panel.Floor_Indicator.Cancel();
+		Info_Panel.Monster_Indicator.Cancel();
 		Platform.Set_State(EPlatform_Substate_Regular::Normal);
 		break;
 
@@ -262,9 +274,7 @@ void AsEngine::On_Falling_Letter(AFalling_Letter *falling_letter)
 		break;
 
 	case ELetter_Type::Plus: // life
-		if (AsInfo_Panel::Extra_Lives_Count < AsConfig::Max_Life_Count)
-			++AsInfo_Panel::Extra_Lives_Count;
-
+		Info_Panel.Increase_Life_Count();
 		Platform.Set_State(EPlatform_Substate_Regular::Normal);
 		break;
 

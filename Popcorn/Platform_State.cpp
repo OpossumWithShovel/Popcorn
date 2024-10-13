@@ -69,6 +69,8 @@ EPlatform_State AsPlatform_State::Set_Next_Or_Regular_State(EPlatform_Substate_R
 	if (Next_State == EPlatform_State::Unknown)
 		Regular = new_regular_substate;
 
+	/*Next_State = EPlatform_State::Unknown;*/  //!!!
+
 	return Next_State;
 }
 //------------------------------------------------------------------------------------------------------------

@@ -53,19 +53,9 @@ void AIndicator::Draw(HDC hdc, RECT &paint_area)
 //-----------------------------------------------------------------------------------------------------------
 bool AIndicator::Is_Finished()
 {
-	AMessage *message;
-
 	if (AsConfig::Current_Timer_Tick > Indicator_Timer_Tick)
 	{
-		if (Need_To_Notify)
-		{
-			message = new AMessage(Message_Type);
-
-			AsMessage_Manager::Add_Message(message);
-
-			Need_To_Notify = false;
-		}
-
+		Cancel();
 		return true;
 	}
 	else
@@ -77,6 +67,22 @@ void AIndicator::Restart()
 	Need_To_Notify = true;
 
 	Indicator_Timer_Tick = AsConfig::Current_Timer_Tick + Indicator_Timeout;
+}
+//-----------------------------------------------------------------------------------------------------------
+void AIndicator::Cancel()
+{
+	AMessage *message;
+
+	if (Need_To_Notify)
+	{
+		message = new AMessage(Message_Type);
+
+		AsMessage_Manager::Add_Message(message);
+
+		Need_To_Notify = false;
+	}
+
+	Reset();
 }
 //-----------------------------------------------------------------------------------------------------------
 void AIndicator::Reset()

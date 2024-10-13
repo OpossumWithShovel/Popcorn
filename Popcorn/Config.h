@@ -70,6 +70,7 @@ public:
 	static const int Max_Modules_Count = 10;
 	static const int Max_Laser_Beams_Count = 10;
 	static const int Max_Monsters_Count = 3;
+	static const int Initial_Life_Count = 5;
 	static const int Max_Life_Count = 12;
 	static const int Floor_Y_Pos = Play_Area_Max_Y_Offset - 1;
 	static const int Ball_On_Glue_Timeout = 60 * FPS;  //!!! 3 sec

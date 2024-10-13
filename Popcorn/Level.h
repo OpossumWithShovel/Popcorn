@@ -2,10 +2,15 @@
 
 #include "Falling_Letter.h"
 #include "Info_Panel.h"
+#include "Level_Data.h"
 
 //------------------------------------------------------------------------------------------------------------
-struct SPoint
+class APoint
 {
+public:
+	APoint();
+	APoint(int x, int y);
+
 	int X, Y;
 };
 //------------------------------------------------------------------------------------------------------------
@@ -29,15 +34,12 @@ public:
 	virtual bool Is_Finished();
 
 	void Init();
-	void Set_Current_Level(char level[AsConfig::Level_Height][AsConfig::Level_Width]);
+	void Set_Current_Level(int level_number);
 	bool Get_Falling_Letter(int &index, AFalling_Letter **falling_letter) const;
 	void Stop();
 
 	static bool Has_Brick_At(int level_x, int level_y);
 	static bool Has_Brick_At(RECT &rect);
-
-	static char Test_Level[AsConfig::Level_Height][AsConfig::Level_Width];
-	static char Level_01[AsConfig::Level_Height][AsConfig::Level_Width];
 
 private:
 	bool On_Hit(int brick_y, int brick_x, ABall_Object *ball, bool vertical_hit);
@@ -61,18 +63,17 @@ private:
 
 	bool Need_To_Cansel_All;
 
-	int Teleport_Bricks_Count;
-
 	double Current_Brick_Left_X, Current_Brick_Right_X;
 	double Current_Brick_Top_Y, Current_Brick_Low_Y;
 
 	RECT Level_Rect;
-	SPoint *Teleport_Bricks_Pos;
+	std::vector<APoint> Teleport_Bricks_Pos;
 
 	std::vector<AGraphics_Object *> Active_Bricks;
 	std::vector<AGraphics_Object *> Falling_Letters;
 
-	static char Current_Level[AsConfig::Level_Height][AsConfig::Level_Width];
+	char Current_Level[AsConfig::Level_Height][AsConfig::Level_Width];
+	std::vector<ALevel_Data *> Levels_Data;
 
 	static AsLevel *Level;
 };
